@@ -18,7 +18,7 @@ public class basicDrive extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             if (gamepad1.left_stick_y < -0.1) {
                 leftDrive.setPower(0.6);
                 rightDrive.setPower(0.6);
@@ -37,6 +37,7 @@ public class basicDrive extends LinearOpMode {
         }
 
     }
+}
 }
 
 
