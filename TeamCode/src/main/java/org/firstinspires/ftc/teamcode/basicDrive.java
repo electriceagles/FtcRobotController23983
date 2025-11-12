@@ -16,21 +16,26 @@ public class basicDrive extends LinearOpMode {
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        if (gamepad1.left_stick_y < -0.1) {
-            leftDrive.setPower(0.6);
-            rightDrive.setPower(0.6);
-        } else {
-            leftDrive.setPower(0);
-            rightDrive.setPower(0);
+        waitForStart();
+
+        while (opModeIsActive()){
+            if (gamepad1.left_stick_y < -0.1) {
+                leftDrive.setPower(0.6);
+                rightDrive.setPower(0.6);
+            } else {
+                leftDrive.setPower(0);
+                rightDrive.setPower(0);
+            }
+
+            if (gamepad1.left_stick_y > 0.1) {
+                leftDrive.setPower(-0.6);
+                rightDrive.setPower(-0.6);
+            } else {
+                leftDrive.setPower(0);
+                rightDrive.setPower(0);
+            }
         }
 
-        if (gamepad1.left_stick_y > 0.1) {
-            leftDrive.setPower(-0.6);
-            rightDrive.setPower(-0.6);
-        } else {
-            leftDrive.setPower(0);
-            rightDrive.setPower(0);
-        }
     }
 }
 
