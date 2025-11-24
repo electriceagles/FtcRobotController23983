@@ -65,7 +65,6 @@ public class ScanStopScan extends LinearOpMode {
             if (tagVisible) {
                 // ----- TAG VISIBLE → STOP -----
                 turret.setPower(0);
-
                 telemetry.addLine("TAG SEEN → STOP");
                 telemetry.addData("Tag Count", detections.size());
                 telemetry.update();
