@@ -9,9 +9,13 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
 
     // drive motors
     private DcMotor lf, rf, lb, rb;
+    
+    //other motors
+    private DcMotor turet;
     private DcMotor intake;
     private DcMotor outtake;
-
+    
+    //calls vision modules
     private ScanStopScanModule scanModule;
     private TurretTagAimerModule turretAimer;
 
@@ -30,7 +34,8 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
         // --- SUBSYSTEM MOTORS ---
         intake  = hardwareMap.dcMotor.get("intake");
         outtake = hardwareMap.dcMotor.get("outtake");
-
+        turret = hardwareMap.dcMotor.get("turret");
+        
         // --- VISION MODULES ---
         scanModule = new ScanStopScanModule(hardwareMap, getRuntime());
         turretAimer = new TurretTagAimerModule(hardwareMap, getRuntime());
@@ -57,26 +62,24 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
             rb.setPower(rbP);
 
             // intake
-            if (gamepad1.right_trigger > 0.1)
-                intake.setPower(1.0);
-            else if (gamepad1.left_trigger > 0.1)
-                intake.setPower(-1.0);
-            else
-                intake.setPower(0);
-
+            intake.setPower(gamepad1.right_stick_y * -1.0);
+            
             // outtake wheel
-            outtake.setPower(gamepad1.right_stick_y * -1.0);
-
+            if (gamepad1.right_trigger > 0.1)
+                outtake.setPower(1.0)
+            else
+                outtake.setPower(0);
+            
             // ===== TURRET VISION MODES =====
-            if (gamepad1.x) {
+            if (gamepad1.dpad_left) {
                 turretAimMode = true;
                 turretScanMode = false;
             }
-            if (gamepad1.y) {
+            if (gamepad1.dpad_right) {
                 turretScanMode = true;
                 turretAimMode = false;
             }
-            if (gamepad1.b) {
+            if (gamepad1.dpad_down) {
                 turretAimMode = false;
                 turretScanMode = false;
             }
@@ -88,7 +91,7 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
                 scanModule.update(runtime);
                 telemetry.addLine("TURRET: SCAN MODE");
             } else {
-                telemetry.addLine("TURRET: MANUAL (no vision)");
+                telemetry.addLine("TURRET: MANUAL");
             }
 
             telemetry.update();
