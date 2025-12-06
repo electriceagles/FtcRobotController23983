@@ -62,7 +62,12 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
             rb.setPower(rbP);
 
             // intake
-            intake.setPower(gamepad1.right_stick_y * -1.0);
+            if (gamepad1.left_trigger > 0.1)
+                intake.setPower(1.0);
+            else if (gamepad1.left_bumper)
+                intake.setPower(-1.0);
+            else
+                intake.setPower(0);
             
             // outtake wheel
             if (gamepad1.right_trigger > 0.1)
@@ -92,6 +97,7 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
                 telemetry.addLine("TURRET: SCAN MODE");
             } else {
                 telemetry.addLine("TURRET: MANUAL");
+                turret.setPower(gamepad1.right_stick_y * 0.5);
             }
 
             telemetry.update();
