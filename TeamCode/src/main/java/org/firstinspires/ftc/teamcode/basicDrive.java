@@ -5,38 +5,53 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name = "basicDrive", group = "TeleOp")
 public class basicDrive extends LinearOpMode {
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
+    private DcMotor leftBack;
+    private DcMotor leftFront;
+    private DcMotor rightBack;
+    private DcMotor rightFront;
 
     @Override
     public void runOpMode() {
-        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
 
         while (opModeIsActive()) {
             if (gamepad1.left_stick_y < -0.1) {
-                leftDrive.setPower(0.6);
-                rightDrive.setPower(0.6);
+                rightBack.setPower(-0.6);
+                rightFront.setPower(-0.6);
+                leftBack.setPower(-0.6);
+                leftFront.setPower(-0.6);
+            } else if (gamepad1.left_stick_y > 0.1) {
+                rightBack.setPower(0.6);
+                rightFront.setPower(0.6);
+                leftBack.setPower(0.6);
+                leftFront.setPower(0.6);
+            } else if (gamepad1.left_stick_x < -0.1) {
+                rightBack.setPower(-0.6);
+                rightFront.setPower(0.6);
+                leftBack.setPower(0.6);
+                leftFront.setPower(-0.6);
+            } else if (gamepad1.left_stick_x > 0.1) {
+                rightBack.setPower(0.6);
+                rightFront.setPower(-0.6);
+                leftBack.setPower(-0.6);
+                leftFront.setPower(0.6);
             } else {
-                leftDrive.setPower(0);
-                rightDrive.setPower(0);
-            }
-
-            if (gamepad1.left_stick_y > 0.1) {
-                leftDrive.setPower(-0.6);
-                rightDrive.setPower(-0.6);
-            } else {
-                leftDrive.setPower(0);
-                rightDrive.setPower(0);
+                rightBack.setPower(0);
+                rightFront.setPower(0);
+                leftBack.setPower(0);
+                leftFront.setPower(0);
             }
         }
 
     }
 }
-
-
