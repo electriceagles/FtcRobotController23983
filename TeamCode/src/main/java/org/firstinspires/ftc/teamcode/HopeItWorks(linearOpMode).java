@@ -33,9 +33,9 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
 
         // --- SUBSYSTEM MOTORS ---
         intake  = hardwareMap.dcMotor.get("intake");
-        outtake1 = hardwareMap.dcMotor.get("o1");
-        outtake2 = hardwareMap.dcMotor.get("o2")
-        turret = hardwareMap.dcMotor.get("turret");
+         // outtake1 = hardwareMap.dcMotor.get("o1");
+        //  = hardwareMap.dcMotor.get("o2")
+        // turret = hardwareMap.dcMotor.get("turret");
         
         // --- VISION MODULES ---
         scanModule = new ScanStopScanModule(hardwareMap, getRuntime());
