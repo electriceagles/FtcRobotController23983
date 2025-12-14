@@ -83,7 +83,7 @@ public class TeleOp extends LinearOpMode {
                     intake.setPower(0);
                 }
 
-                /* A recommendation I give is using triggers for turret control as well */ \
+                /* A recommendation I give is using triggers for turret control as well */
                 // You can put ur shooter.setPower() in there
                 if (gamepad2.left_trigger > 0) {
 
