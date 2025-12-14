@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -30,17 +29,13 @@ public class TurretTagAimer extends LinearOpMode {
     // target: aim directly at tag (yaw ~ 0)
     private static final int PREFERRED_TAG_ID  = -1;     // -1 = any tag; or set to 0..20 for one tag
 
-    // Soft limits (encoder ticks) to protect wires/mechanics; set after homing or manual zero
+    // Soft limits (encoder ticks) to protect wires/mechanics
+    // Adjust these to match your turret's safe range.
     private static final int SOFT_MIN_TICKS    = -2600;
     private static final int SOFT_MAX_TICKS    =  2600;
-
-    // Homing (optional)
-    private static final boolean USE_HOMING    = true;   // set false if you don't have a limit switch
-    private static final double HOMING_POWER   = -0.12;  // power toward the home switch
     // --------------------------------------------------
 
     private DcMotor turret;
-    private DigitalChannel homeSwitch; // optional
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
 
@@ -54,20 +49,17 @@ public class TurretTagAimer extends LinearOpMode {
         // --------------- Hardware ----------------
         turret = hardwareMap.get(DcMotor.class, "turret");
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // reverse if turret spins the wrong way:
+        // If turret spins the wrong direction, flip this:
         // turret.setDirection(DcMotorSimple.Direction.REVERSE);
+        turret.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        if (USE_HOMING) {
-            homeSwitch = hardwareMap.get(DigitalChannel.class, "turretHome");
-            homeSwitch.setMode(DigitalChannel.Mode.INPUT);
-        }
-
-        // Reset encoder (you can also do this after homing)
+        // Reset encoder at startup
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // --------------- Vision ------------------
         aprilTag = new AprilTagProcessor.Builder().build();
+
         WebcamName webcam = hardwareMap.get(WebcamName.class, "webcam");
         visionPortal = new VisionPortal.Builder()
                 .setCamera(webcam)
@@ -75,26 +67,21 @@ public class TurretTagAimer extends LinearOpMode {
                 .build();
 
         telemetry.addLine("Turret AprilTag Aimer: INIT");
-        telemetry.addLine("A: toggle stream  |  X: re-zero encoder");
+        telemetry.addLine("A: stop stream  |  B: resume stream  |  X: re-zero encoder");
         telemetry.update();
 
         waitForStart();
 
-        // Optional homing at start
-        if (opModeIsActive() && USE_HOMING) {
-            telemetry.addLine("Homing turret...");
-            telemetry.update();
-            homeTurret();
-            telemetry.addLine("Homing complete.");
-            telemetry.update();
-        }
-
         lastTime = getRuntime();
 
         while (opModeIsActive()) {
-            // controls: quick helpers during testing
-            if (gamepad1.a) visionPortal.stopStreaming();
-            if (gamepad1.b) visionPortal.resumeStreaming();
+            // --- Controls for testing ---
+            if (gamepad1.a) {
+                visionPortal.stopStreaming();
+            }
+            if (gamepad1.b) {
+                visionPortal.resumeStreaming();
+            }
             if (gamepad1.x) { // manual zero where you are
                 turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -106,11 +93,11 @@ public class TurretTagAimer extends LinearOpMode {
             if (detections != null && !detections.isEmpty()) {
                 AprilTagDetection d = pickDetection(detections, PREFERRED_TAG_ID);
 
-                // yaw is positive when tag is rotated to the robot's left or right (depends on camera)
-                // In FTC ftcPose.yaw is in degrees. Target is yaw -> 0.
+                // In FTC, ftcPose.yaw is in degrees.
+                // Target is yaw -> 0 (tag centered).
                 double yawDeg = d.ftcPose.yaw;
 
-                // Deadband to avoid twitching
+                // Deadband to avoid twitching around perfect center
                 if (Math.abs(yawDeg) < DEADBAND_DEG) {
                     commandedPower = 0.0;
                     resetPid();
@@ -128,8 +115,12 @@ public class TurretTagAimer extends LinearOpMode {
 
             // Enforce soft limits
             int pos = turret.getCurrentPosition();
-            if (pos <= SOFT_MIN_TICKS && commandedPower < 0) commandedPower = 0;
-            if (pos >= SOFT_MAX_TICKS && commandedPower > 0) commandedPower = 0;
+            if (pos <= SOFT_MIN_TICKS && commandedPower < 0) {
+                commandedPower = 0;
+            }
+            if (pos >= SOFT_MAX_TICKS && commandedPower > 0) {
+                commandedPower = 0;
+            }
 
             // clamp and apply
             commandedPower = clamp(commandedPower, -MAX_POWER, MAX_POWER);
@@ -138,40 +129,51 @@ public class TurretTagAimer extends LinearOpMode {
             // Telemetry
             telemetry.addData("turret ticks", pos);
             telemetry.addData("power", "%.2f", commandedPower);
+
             if (detections != null && !detections.isEmpty()) {
+                AprilTagDetection use = pickDetection(detections, PREFERRED_TAG_ID);
                 telemetry.addData("tag count", detections.size());
-                telemetry.addData("using tag id", pickDetection(detections, PREFERRED_TAG_ID).id);
-                telemetry.addData("yaw deg", "%.2f", pickDetection(detections, PREFERRED_TAG_ID).ftcPose.yaw);
+                telemetry.addData("using tag id", use.id);
+                telemetry.addData("yaw deg", "%.2f", use.ftcPose.yaw);
             } else {
                 telemetry.addLine("No tag detected — sweeping…");
             }
+
             telemetry.update();
         }
 
         // cleanup
         turret.setPower(0);
-        if (visionPortal != null) visionPortal.close();
+        if (visionPortal != null) {
+            visionPortal.close();
+        }
     }
 
+    // Pick a tag: preferred ID if available, otherwise the one closest to center.
     private AprilTagDetection pickDetection(List<AprilTagDetection> list, int preferredId) {
         if (preferredId >= 0) {
-            for (AprilTagDetection d : list) if (d.id == preferredId) return d;
+            for (AprilTagDetection d : list) {
+                if (d.id == preferredId) return d;
+            }
         }
-        // otherwise, pick the one closest to centered yaw (|yaw| minimal)
+        // otherwise, pick the one with minimal |yaw|
         AprilTagDetection best = list.get(0);
         double bestAbs = Math.abs(best.ftcPose.yaw);
         for (AprilTagDetection d : list) {
             double a = Math.abs(d.ftcPose.yaw);
-            if (a < bestAbs) { best = d; bestAbs = a; }
+            if (a < bestAbs) {
+                best = d;
+                bestAbs = a;
+            }
         }
         return best;
     }
 
+    // PID controller on yaw error (target = 0 deg)
     private double pidUpdate(double errorYawDeg) {
         double now = getRuntime();
         double dt = Math.max(1e-3, now - lastTime); // avoid divide-by-zero
 
-        // classic PID on yaw error (target 0)
         double derivative = (errorYawDeg - lastErrorDeg) / dt;
         errorIntegral += errorYawDeg * dt;
 
@@ -179,7 +181,10 @@ public class TurretTagAimer extends LinearOpMode {
 
         lastErrorDeg = errorYawDeg;
         lastTime = now;
-        return -out; // negative because if yaw is +, we typically need to rotate - to center (flip if backwards)
+
+        // Negative sign because if yaw is +, turret likely must turn - to center.
+        // If it moves the wrong way, change this to `return +out;`
+        return -out;
     }
 
     private void resetPid() {
@@ -190,26 +195,5 @@ public class TurretTagAimer extends LinearOpMode {
 
     private double clamp(double v, double lo, double hi) {
         return Math.max(lo, Math.min(hi, v));
-    }
-
-    private void homeTurret() {
-        // Drive slowly toward the switch until pressed, then zero the encoder.
-        // Adjust power sign depending on where your switch is.
-        double timeout = getRuntime() + 3.0; // safety timeout (seconds)
-        while (opModeIsActive() && !isHomePressed() && getRuntime() < timeout) {
-            turret.setPower(HOMING_POWER);
-            idle();
-        }
-        turret.setPower(0);
-        // small backoff if you want to clear the switch (optional)
-        sleep(100);
-        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    private boolean isHomePressed() {
-        if (!USE_HOMING || homeSwitch == null) return false;
-        // REV touch sensor is "false" when pressed (active low)
-        return !homeSwitch.getState();
     }
 }
