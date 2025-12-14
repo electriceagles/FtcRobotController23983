@@ -46,7 +46,7 @@ public class basicDrive extends LinearOpMode {
                 rightBack.setPower(0);
                 rightFront.setPower(0);
                 leftBack.setPower(0);
-                leftFront.setPower(0.0);
+                leftFront.setPower(0);
             }
         }
 
