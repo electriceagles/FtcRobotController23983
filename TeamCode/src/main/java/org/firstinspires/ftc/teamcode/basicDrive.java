@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name = "basicDrive", group = "TeleOp")
 public class basicDrive extends LinearOpMode {
-    private DcMotor leftBack;
-    private DcMotor leftFront;
-    private DcMotor rightBack;
-    private DcMotor rightFront;
+    private DcMotor rightBack, rightFront, leftFront, leftBack;
 
     @Override
     public void runOpMode() {
