@@ -17,26 +17,26 @@ public class TeleOp extends LinearOpMode {
     public DcMotorEx shooterFlyWheel1;
     public DcMotorEx shooterFlyWheel2;
 
-    public DcMotorEx turret;
 
     public double powerMult = 1;
+    public double powerLim = 1;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+
         // Put your configured names in the blank spaces of ""
         // Make sure they accurately match your configuration
-        leftFront = hardwareMap.get(DcMotorEx.class, "");
-        rightRear = hardwareMap.get(DcMotorEx.class, "");
-        leftRear = hardwareMap.get(DcMotorEx.class, "");
-        rightFront = hardwareMap.get(DcMotorEx.class, "");
+        leftFront = hardwareMap.get(DcMotorEx.class, "lf");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rr");
+        leftRear = hardwareMap.get(DcMotorEx.class, "lr");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rf");
 
-        intake = hardwareMap.get(DcMotorEx.class, "");
+        intake = hardwareMap.get(DcMotorEx.class, "i");
 
-        shooterFlyWheel1 = hardwareMap.get(DcMotorEx.class, "");
-        shooterFlyWheel2 = hardwareMap.get(DcMotorEx.class, "");
-
-        turret = hardwareMap.get(DcMotorEx.class, "");
+        shooterFlyWheel1 = hardwareMap.get(DcMotorEx.class, "sf1");
+        shooterFlyWheel2 = hardwareMap.get(DcMotorEx.class, "sf2");
 
         /* First test and see how the motor spins,
         if you want the motor to spin forward then reverse the direction */
@@ -49,12 +49,12 @@ public class TeleOp extends LinearOpMode {
 
         shooterFlyWheel1.setDirection(DcMotorSimple.Direction.FORWARD);
         shooterFlyWheel2.setDirection(DcMotorSimple.Direction.FORWARD);
-        turret.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
         waitForStart();
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-
                 double vertical = -gamepad1.left_stick_y;
                 double horizontal = gamepad1.left_stick_x;
                 double pivot = gamepad1.right_stick_x;
@@ -77,27 +77,30 @@ public class TeleOp extends LinearOpMode {
 
                 if (gamepad1.left_trigger > 0) {
                     intake.setPower(-1);
-                }   else if (gamepad1.right_trigger > 0) {
+                } else if (gamepad1.right_trigger > 0) {
                     intake.setPower(1);
                 } else {
                     intake.setPower(0);
                 }
 
-                /* A recommendation I give is using triggers for turret control as well */
-                // You can put ur shooter.setPower() in there
-                if (gamepad2.left_trigger > 0) {
-
-                } else {
-
-                }
+                double shoot = gamepad2.right_trigger;
 
                 /* Use these buttons to set a constant power if you want */
                 if (gamepad2.b) {
-
+                    powerLim = 0.6;
                 } else {
-
+                    powerLim = 1;
                 }
 
+                /* A recommendation I give is using triggers for turret control as well */
+                // You can put ur shooter.setPower() in there
+                if (gamepad2.right_trigger > 0) {
+                    shooterFlyWheel1.setPower(shoot * powerLim);
+                    shooterFlyWheel2.setPower(shoot * powerLim);
+                } else {
+                    shooterFlyWheel1.setPower(0);
+                    shooterFlyWheel2.setPower(0);
+                }
 
             }
         }
