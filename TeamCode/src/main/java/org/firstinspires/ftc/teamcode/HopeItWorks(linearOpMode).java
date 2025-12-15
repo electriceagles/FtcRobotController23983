@@ -11,7 +11,7 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
     private DcMotor lf, rf, lb, rb;
     
     //other motors
-    private DcMotor turet;
+    private DcMotor turret;
     private DcMotor intake;
     private DcMotor o1, o2;
     
@@ -33,9 +33,12 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
 
         // --- SUBSYSTEM MOTORS ---
         intake  = hardwareMap.dcMotor.get("intake");
-        // outtake1 = hardwareMap.dcMotor.get("o1");
-        // outtake2 = hardwareMap.dcMotor.get("o2")
-        // turret = hardwareMap.dcMotor.get("turret");
+        o1 = hardwareMap.dcMotor.get("o1");
+        o2 = hardwareMap.dcMotor.get("o2")
+        turret = hardwareMap.dcMotor.get("turret");
+
+        o1.setDirection(DcMotorSimple.Direction.FORWARD);
+        o2.setDirection(DcMotorSimple.Direction.REVERSE);
         
         // --- VISION MODULES ---
         scanModule = new ScanStopScanModule(hardwareMap, getRuntime());
@@ -71,12 +74,13 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
                 intake.setPower(0);
             
             // outtake wheel
-            if (gamepad1.right_trigger > 0.1)
-                outtake1.setPower(1.0)
-                outtake2.setPower(-1.0)
-            else
-                outtake.setPower(0);
-            
+            if (gamepad1.right_trigger > 0.1) {
+                o1.setPower(1.0)
+                o2.setPower(1.0)
+            } else {
+                o1.setPower(0);
+                o2.setPower(0);
+            }
             // ===== TURRET VISION MODES =====
             if (gamepad1.dpad_left) {
                 turretAimMode = true;
