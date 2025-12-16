@@ -50,8 +50,7 @@ public class TeleOpFinal extends LinearOpMode {
         rf = hardwareMap.get(DcMotorEx.class, "rf");
         rr = hardwareMap.get(DcMotorEx.class, "rr");
 
-        //note to self: change the directions later
-
+        //*note to self: change the directions later once robot is finished*
         lf.setDirection(DcMotorSimple.Direction.FORWARD);
         lr.setDirection(DcMotorSimple.Direction.FORWARD);
         rf.setDirection(DcMotorSimple.Direction.FORWARD);
