@@ -31,6 +31,8 @@ public class TeleOpFinal extends LinearOpMode {
     public double powerMult = 1.0;
     public double shooterLimit = 1.0;
 
+    public double mp = 0.4;
+
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
 
@@ -53,8 +55,8 @@ public class TeleOpFinal extends LinearOpMode {
         //*note to self: change the directions later once robot is finished*
         lf.setDirection(DcMotorSimple.Direction.FORWARD);
         lr.setDirection(DcMotorSimple.Direction.FORWARD);
-        rf.setDirection(DcMotorSimple.Direction.FORWARD);
-        rr.setDirection(DcMotorSimple.Direction.FORWARD);
+        rf.setDirection(DcMotorSimple.Direction.REVERSE);
+        rr.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         intake = hardwareMap.get(DcMotorEx.class, "i");
@@ -102,9 +104,9 @@ public class TeleOpFinal extends LinearOpMode {
 
             // controller 1 intake
             if (gamepad1.left_trigger > 0.1) {
-                intake.setPower(-1);
+                intake.setPower(-1); //artifact goes in w left trigger
             } else if (gamepad1.right_trigger > 0.1) {
-                intake.setPower(1);
+                intake.setPower(1); //artifact goes out w right trigger
             } else {
                 intake.setPower(0);
             }
@@ -128,12 +130,15 @@ public class TeleOpFinal extends LinearOpMode {
 
             if (Math.abs(manualTurret) > 0.1) {
                 // overriding the auto scan
-                turretAuto = false;
-                turret.setPower(manualTurret);
+                turretAuto = false; //if the right stick moved, ignores auto scan
+                double m = manualTurret * mp; //limits the manual turret power to 40% of trigger movement
+                turret.setPower(m);
             } else {
                 turretAuto = true;
             }
+            //note for driver: only move to manual if auto scan doesn't work
 
+            //automatic turret scan system (uses sin wave's concept to scan left and right)
             if (turretAuto) {
                 List<AprilTagDetection> detections = aprilTag.getDetections();
                 boolean tagSeen = detections != null && !detections.isEmpty();
