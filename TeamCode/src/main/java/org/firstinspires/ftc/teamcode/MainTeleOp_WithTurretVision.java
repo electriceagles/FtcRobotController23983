@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name="MainTeleOp_WithTurretVision", group="FINAL")
 public class MainTeleOp_WithTurretVision extends LinearOpMode {
@@ -34,7 +35,7 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
         // --- SUBSYSTEM MOTORS ---
         intake  = hardwareMap.dcMotor.get("intake");
         o1 = hardwareMap.dcMotor.get("o1");
-        o2 = hardwareMap.dcMotor.get("o2")
+        o2 = hardwareMap.dcMotor.get("o2");
         turret = hardwareMap.dcMotor.get("turret");
 
         o1.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -75,8 +76,8 @@ public class MainTeleOp_WithTurretVision extends LinearOpMode {
             
             // outtake wheel
             if (gamepad1.right_trigger > 0.1) {
-                o1.setPower(1.0)
-                o2.setPower(1.0)
+                o1.setPower(1.0);
+                o2.setPower(1.0);
             } else {
                 o1.setPower(0);
                 o2.setPower(0);
