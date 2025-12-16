@@ -37,7 +37,7 @@ public class TeleOpFinal extends LinearOpMode {
     public AprilTagProcessor aprilTag;
 
 
-    public static final double SCAN_POWER = 0.20;
+    public static final double SCAN_POWER = 0.30;
     public static final double SCAN_FREQ  = 0.25;
 
     public boolean turretAuto = true;
