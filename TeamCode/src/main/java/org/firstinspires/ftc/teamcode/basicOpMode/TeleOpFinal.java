@@ -94,7 +94,7 @@ public class TeleOpFinal extends LinearOpMode {
             double lrP = y - x + rx;
             double rrP = y + x - rx;
 
-            powerMult = gamepad1.dpad_up ? 0.5 : 1.0;
+            powerMult = gamepad1.dpad_up ? 0.5 : 1.0; //ternary operator for simplicity
 
             lf.setPower(lfP * powerMult);
             rf.setPower(rfP * powerMult);
