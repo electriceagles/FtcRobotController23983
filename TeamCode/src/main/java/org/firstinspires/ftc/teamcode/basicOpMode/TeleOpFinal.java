@@ -28,14 +28,16 @@ public class TeleOpFinal extends LinearOpMode {
     public DcMotorEx shooter2;
     public DcMotor turret;
 
-    public double powerMult = 1.0;
+    public double powerMult = 0.5;
     public double shooterLimit = 1.0;
+
+    public double mp = 0.4;
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
 
 
-    public static final double SCAN_POWER = 0.20;
+    public static final double SCAN_POWER = 0.30;
     public static final double SCAN_FREQ  = 0.25;
 
     public boolean turretAuto = true;
@@ -53,8 +55,8 @@ public class TeleOpFinal extends LinearOpMode {
         //*note to self: change the directions later once robot is finished*
         lf.setDirection(DcMotorSimple.Direction.FORWARD);
         lr.setDirection(DcMotorSimple.Direction.FORWARD);
-        rf.setDirection(DcMotorSimple.Direction.FORWARD);
-        rr.setDirection(DcMotorSimple.Direction.FORWARD);
+        rf.setDirection(DcMotorSimple.Direction.REVERSE);
+        rr.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         intake = hardwareMap.get(DcMotorEx.class, "i");
@@ -84,16 +86,15 @@ public class TeleOpFinal extends LinearOpMode {
         while (opModeIsActive()) {
 
             // controller 1 drives the bot
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            double y = gamepad1.left_stick_y;
+            double x = -gamepad1.left_stick_x;
+            double rx = -gamepad1.right_stick_x;
 
             double lfP = y + x + rx;
             double rfP = y - x - rx;
             double lrP = y - x + rx;
             double rrP = y + x - rx;
 
-            powerMult = gamepad1.dpad_up ? 0.5 : 1.0; //ternary operator for simplicity
 
             lf.setPower(lfP * powerMult);
             rf.setPower(rfP * powerMult);
@@ -101,10 +102,10 @@ public class TeleOpFinal extends LinearOpMode {
             rr.setPower(rrP * powerMult);
 
             // controller 1 intake
-            if (gamepad1.left_trigger > 0.1) {
-                intake.setPower(-1);
-            } else if (gamepad1.right_trigger > 0.1) {
-                intake.setPower(1);
+            if (gamepad1.dpad_up) {
+                intake.setPower(-1); //artifact goes in w left trigger
+            } else if (gamepad1.dpad_down) {
+                intake.setPower(1); //artifact goes out w right trigger
             } else {
                 intake.setPower(0);
             }
@@ -128,12 +129,15 @@ public class TeleOpFinal extends LinearOpMode {
 
             if (Math.abs(manualTurret) > 0.1) {
                 // overriding the auto scan
-                turretAuto = false;
-                turret.setPower(manualTurret);
+                turretAuto = false; //if the right stick moved, ignores auto scan
+                double m = manualTurret * mp; //limits the manual turret power to 40% of trigger movement
+                turret.setPower(m);
             } else {
                 turretAuto = true;
             }
+            //note for driver: only move to manual if auto scan doesn't work
 
+            //automatic turret scan system (uses sin wave's concept to scan left and right)
             if (turretAuto) {
                 List<AprilTagDetection> detections = aprilTag.getDetections();
                 boolean tagSeen = detections != null && !detections.isEmpty();
