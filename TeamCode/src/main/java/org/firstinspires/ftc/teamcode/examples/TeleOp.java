@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.basicOpMode;
+package org.firstinspires.ftc.teamcode.examples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp (name = "Duo TeleOp", group = "TeleOp")
 public class TeleOp extends LinearOpMode {
 
