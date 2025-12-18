@@ -113,7 +113,7 @@ public class TeleOpFinal extends LinearOpMode {
             // controller 2 shoots
             shooterLimit = gamepad2.b ? 0.6 : 1.0;
 
-            if (gamepad2.right_trigger > 0.05) {
+            if (gamepad2.right_trigger > 0.1) {
                 double p = gamepad2.right_trigger * shooterLimit;
                 shooter1.setPower(p);
                 shooter2.setPower(p);
