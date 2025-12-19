@@ -28,11 +28,10 @@ public class TeleOpFinal extends LinearOpMode {
     public DcMotorEx shooter2;
     public DcMotor turret;
 
-    public double powerMult = 0.5;
+    public double powerMult = 0.7;
     public double shooterLimit = 1.0;
 
     public double mp = 0.4;
-
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
 
