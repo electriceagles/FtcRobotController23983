@@ -90,6 +90,11 @@ public class TeleOpFinal2 extends LinearOpMode {
             double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
 
+            //deadzone to avoid stick drift (hopefully works...)
+            if (Math.abs(y)  < 0.05) y  = 0;
+            if (Math.abs(x)  < 0.05) x  = 0;
+            if (Math.abs(rx) < 0.05) rx = 0;
+
             double lfP = y + x + rx;
             double rfP = y - x - rx;
             double lrP = y - x + rx;
