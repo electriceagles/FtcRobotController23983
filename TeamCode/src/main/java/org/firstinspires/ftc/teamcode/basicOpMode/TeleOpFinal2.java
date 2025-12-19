@@ -106,9 +106,9 @@ public class TeleOpFinal2 extends LinearOpMode {
             lr.setPower(lrP * powerMult);
             rr.setPower(rrP * powerMult);
 
-            // controller 1 rev up shooter (bottom right trigger)
+            // controller 1 rev up shooter (top right trigger)
 
-            if (gamepad1.right_trigger > 0) {
+            if (gamepad1.right_bumper) {
                 shooter1.setPower(1);
                 shooter2.setPower(1);
             } else {
@@ -128,8 +128,8 @@ public class TeleOpFinal2 extends LinearOpMode {
 
             // servo system (holding top right moves it 90deg)
             //SERVO SYSTEM MUST BE TUNED LATER TO RIGHT POSITIONS
-            if (gamepad1.right_bumper) {
-                servo.setPosition(0.5); // moves servo 90 degrees
+            if (gamepad1.right_trigger > 0.1) {
+                servo.setPosition(0.67); // moves servo 90 degrees
             } else {
                 servo.setPosition(0); // moves back to og position
             }
