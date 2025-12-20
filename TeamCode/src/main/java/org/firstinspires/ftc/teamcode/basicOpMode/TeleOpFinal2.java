@@ -167,11 +167,13 @@ public class TeleOpFinal2 extends LinearOpMode {
             //automatic turret scan system (uses sin wave concept to scan left and right)
             if (turretAuto) {
                 List<AprilTagDetection> detections = aprilTag.getDetections();
-                boolean tagSeen = detections != null && !detections.isEmpty();
+                AprilTagDetection targetTag = getTargetTag(detections);
 
-                if (tagSeen) {
+                if (targetTag != null) {
+                    // correct tag seen → stop scanning
                     turret.setPower(0);
                 } else {
+                    // no correct tag → keep scanning
                     double t = getRuntime() - scanStartTime;
                     double s = Math.sin(2 * Math.PI * SCAN_FREQ * t);
                     turret.setPower(SCAN_POWER * Math.signum(s));
@@ -182,5 +184,17 @@ public class TeleOpFinal2 extends LinearOpMode {
 
         turret.setPower(0);
         if (visionPortal != null) visionPortal.close();
+    }
+
+    // basically if it detects a tag it checks if it's the one we need (if it matches our alliance)
+    private AprilTagDetection getTargetTag(List<AprilTagDetection> detections) {
+        if (detections == null) return null;
+
+        for (AprilTagDetection tag : detections) {
+            if (tag.id == TARGET_TAG_ID) {
+                return tag;
+            }
+        }
+        return null;
     }
 }
