@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -27,7 +28,7 @@ public class RobotHardware {
 
     public DcMotorEx shooterFlyWheel1;
     public DcMotorEx shooterFlyWheel2;
-
+    public Servo servo;
     public DcMotorEx turret;
 
     public VisionPortal visionPortal;

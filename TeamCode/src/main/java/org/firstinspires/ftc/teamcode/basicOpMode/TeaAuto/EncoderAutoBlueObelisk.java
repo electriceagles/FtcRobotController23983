@@ -5,6 +5,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.Range;
+import android.util.Size;
+
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
+
 /*@Disabled Disabled it for now since I cannot test it, If someone does plan to test this
 Record a video of the test and remove the @Disabled and remember to push code back to the control hub
  */
@@ -13,6 +25,17 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
 
     public RobotHardware hardware = new RobotHardware();
 
+    public VisionPortal visionPortal;
+    public AprilTagProcessor aprilTag;
+    public DcMotorEx turret;
+
+    public static final int TARGET_TAG_ID = 20; // right now for blue alliance only; 24 for red
+    public static final double SCAN_POWER = 0.30;
+    public static final double SCAN_FREQ  = 0.25;
+
+    public static final double TURRET_KP = 0.02;          // power per degree of yaw (start small)
+    public static final double MAX_TURRET_POWER = 0.35;
+    public static final double YAW_TOL_DEG = 2.0;
     public static final double TICKS_PER_REV = 383.6;
     public static final double WHEEL_DIAMETER = 4.09;  // Inches
     public static final double TICKS_PER_INCH = TICKS_PER_REV / (Math.PI * WHEEL_DIAMETER);
@@ -26,30 +49,109 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         hardware.init(hardwareMap, false);
         hardware.resetEnc();
 
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        WebcamName webcam = hardwareMap.get(WebcamName.class, "webcam");
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(webcam)
+                .setCameraResolution(new Size(640, 480))
+                .enableLiveView(true)
+                .addProcessor(aprilTag)
+                .build();
+
         waitForStart();
 
-        while (!isStarted()) {
-            // TODO: Display telemetry here.
-        }
 
         if (opModeIsActive()) {
 
             // This is a test if this works we can have this as a backup auto in case you don't have enough time to tune.
-            driveInches(72, 0.5);
-            sleep(2000);
-            turn(-90, 0.5);
-            sleep(1000);
-            servo(0);
-            sleep(1000);
-            rev(0.67, 6700);
-            sleep(1000);
-            servo(0.5);
-            sleep(1000);
+            boolean seen = scanTurretUntilTagSeen(2.5);
+
+            if (seen) {
+                trackTurretToCenter(1.5);
+                driveInches(72, 0.5);
+                turn(-90, 0.5);
+                servo(0);
+                sleep(1000);
+                rev(0.67, 6700);
+                servo(0.5);
+                sleep(1000);
+
+                turret.setPower(0);
+                if (visionPortal != null) visionPortal.close();
+            }
 
         }
 
     }
+    private AprilTagDetection getTargetTag() {
+        if (aprilTag == null) return null;
 
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        if (detections == null) return null;
+
+        for (AprilTagDetection tag : detections) {
+            if (tag.id == TARGET_TAG_ID) return tag;
+        }
+        return null;
+    }
+
+    public boolean scanTurretUntilTagSeen(double timeoutSeconds) {
+        double start = getRuntime();
+
+        while (opModeIsActive() && (getRuntime() - start) < timeoutSeconds) {
+            AprilTagDetection target = getTargetTag();
+
+            if (target != null) {
+                turret.setPower(0);
+                return true; // found it
+            }
+
+            double t = getRuntime() - start;
+            double s = Math.sin(2 * Math.PI * SCAN_FREQ * t);
+            turret.setPower(SCAN_POWER * Math.signum(s));
+
+            idle(); // important so vision + system threads run
+        }
+
+        turret.setPower(0);
+        return false; // timed out
+    }
+    public boolean trackTurretToCenter(double timeoutSeconds) {
+        double start = getRuntime();
+
+        while (opModeIsActive() && (getRuntime() - start) < timeoutSeconds) {
+            AprilTagDetection target = getTargetTag();
+            if (target == null) {
+                turret.setPower(0);
+                return false;
+            }
+
+            double yaw = target.ftcPose.yaw; // degrees (positive/negative depends on camera orientation)
+
+            if (Math.abs(yaw) <= YAW_TOL_DEG) {
+                turret.setPower(0);
+                return true; // centered enough
+            }
+
+            double power = Range.clip(TURRET_KP * yaw, -MAX_TURRET_POWER, MAX_TURRET_POWER);
+
+            // If it turns the wrong direction, flip the sign:
+            turret.setPower(power);
+
+            idle();
+        }
+
+        turret.setPower(0);
+        return false;
+    }
+    public void intake(double powerI, double powerF, double inches, double powerB) {
+        hardware.intake.setPower(powerI);
+        driveInches(inches, powerF);
+        hardware.intake.setPower(0);
+        driveInches(inches, powerB);
+    }
     public void driveInches(double inches, double power) {
         int ticks = (int) Math.round(inches * TICKS_PER_INCH);
         drive(ticks, power);
@@ -107,14 +209,6 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         hardware.leftRear.setPower(power);
 
         waitForDriveMotors();
-    }
-
-    public void turret(){
-        hardware.resetEnc();
-
-
-
-
     }
 
     public void turn(int degrees, double power) {
