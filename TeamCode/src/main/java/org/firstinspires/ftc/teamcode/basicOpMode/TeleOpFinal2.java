@@ -115,7 +115,7 @@ public class TeleOpFinal2 extends LinearOpMode {
                 shooter2.setPower(0);
             }
 
-            // controler 1 intake (bottom left is intake, top left is discard)
+            // controller 1 intake (bottom left is intake, top left is discard)
 
             if (gamepad1.left_trigger > 0.1) {
                 intake.setPower(1);

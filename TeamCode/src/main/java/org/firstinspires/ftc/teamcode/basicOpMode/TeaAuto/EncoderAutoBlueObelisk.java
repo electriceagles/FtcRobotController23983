@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.basicOpMode.TeaAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 
 /*@Disabled Disabled it for now since I cannot test it, If someone does plan to test this
@@ -37,16 +35,39 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         if (opModeIsActive()) {
 
             // This is a test if this works we can have this as a backup auto in case you don't have enough time to tune.
-            drive(2000, 0.5);
+            driveInches(72, 0.5);
             sleep(2000);
-            turn(-45, 0.5);
+            turn(-90, 0.5);
             sleep(1000);
             servo(0);
             sleep(1000);
-            rev(0.67, 5);
+            rev(0.67, 6700);
+            sleep(1000);
+            servo(0.5);
+            sleep(1000);
 
         }
 
+    }
+
+    public void driveInches(double inches, double power) {
+        int ticks = (int) Math.round(inches * TICKS_PER_INCH);
+        drive(ticks, power);
+    }
+    private void waitForDriveMotors() {
+        while (opModeIsActive()
+                && (hardware.leftFront.isBusy()
+                || hardware.rightFront.isBusy()
+                || hardware.leftRear.isBusy()
+                || hardware.rightRear.isBusy())) {
+            idle();
+        }
+
+        // stop motors after reaching target
+        hardware.leftFront.setPower(0);
+        hardware.rightFront.setPower(0);
+        hardware.leftRear.setPower(0);
+        hardware.rightRear.setPower(0);
     }
 
     public void rev(double power, double time){
@@ -55,6 +76,10 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         hardware.shooterFlyWheel1.setPower(power);
         hardware.shooterFlyWheel2.setPower(power);
 
+       sleep((long)(time));
+
+       hardware.shooterFlyWheel1.setPower(0);
+       hardware.shooterFlyWheel2.setPower(0);
     }
 
     public void servo(double position) {
@@ -80,6 +105,16 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         hardware.rightFront.setPower(power);
         hardware.rightRear.setPower(power);
         hardware.leftRear.setPower(power);
+
+        waitForDriveMotors();
+    }
+
+    public void turret(){
+        hardware.resetEnc();
+
+
+
+
     }
 
     public void turn(int degrees, double power) {
@@ -102,6 +137,13 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         hardware.rightFront.setPower(power);
         hardware.rightRear.setPower(power);
         hardware.leftRear.setPower(power);
+
+        waitForDriveMotors();
+    }
+    public void strafeInches(String direction, double inches, double power) {
+        int ticks = (int) Math.round(inches * TICKS_PER_INCH);
+        strafe(direction, ticks, power);
+        waitForDriveMotors();
     }
 
     public void strafe(String direction, int encPos, double power) {
@@ -127,6 +169,7 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
             hardware.rightFront.setPower(-power);
             hardware.rightRear.setPower(power);
             hardware.leftRear.setPower(-power);
+
         }
     }
 }
