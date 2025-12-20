@@ -129,7 +129,7 @@ public class TeleOpFinal2 extends LinearOpMode {
             // servo system (holding top right moves it 90deg)
             //SERVO SYSTEM MUST BE TUNED LATER TO RIGHT POSITIONS
             if (gamepad1.right_trigger > 0.1) {
-                servo.setPosition(0.67); // moves servo 90 degrees
+                servo.setPosition(0.67); // moves servo 120 degrees
             } else {
                 servo.setPosition(0); // moves back to og position
             }
