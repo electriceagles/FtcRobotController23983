@@ -77,6 +77,7 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
                 rev(0.67, 6700);
                 servo(0.5);
                 sleep(1000);
+                intake(0.67,0.67,36,-0.67);
 
                 turret.setPower(0);
                 if (visionPortal != null) visionPortal.close();
