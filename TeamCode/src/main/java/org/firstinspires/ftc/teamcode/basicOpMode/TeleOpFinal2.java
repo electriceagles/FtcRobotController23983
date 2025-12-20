@@ -34,6 +34,7 @@ public class TeleOpFinal2 extends LinearOpMode {
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
+    public static final int TARGET_TAG_ID = 20; // right now for blue alliance only; 24 for red
 
 
     public static final double SCAN_POWER = 0.30;
