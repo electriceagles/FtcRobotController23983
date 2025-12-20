@@ -16,7 +16,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "Duo TeleOp + Vision Turret V2", group = "TeleOp")
+@TeleOp(name = "Q1 TeleOp - Blue", group = "TeleOp")
 public class TeleOpFinal2 extends LinearOpMode {
 
     public DcMotorEx lf;
