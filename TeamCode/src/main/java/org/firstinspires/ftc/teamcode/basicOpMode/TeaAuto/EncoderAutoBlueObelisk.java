@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 
-@Disabled // Disabled it for now since I cannot test it, If someone does plan to test this
+//@Disabled // Disabled it for now since I cannot test it, If someone does plan to test this
 // Record a video of the test and remove the @Disabled and remember to push code back to the control hub
 @Autonomous
 public class EncoderAutoBlueObelisk extends LinearOpMode {
@@ -40,12 +40,25 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
             sleep(2000);
             turn(-90, 0.5);
             sleep(1000);
-            strafe("left", 500, 0.5);
+            servo(0);
+            sleep(1000);
+            rev(0.67, 5);
         }
 
     }
+    public void rev(double power, double time){
+        hardware.resetEnc();
 
+        hardware.shooterFlyWheel1.setPower(power);
+        hardware.shooterFlyWheel2.setPower(power);
+    }
 
+    public void servo(double position) {
+        hardware.resetEnc();
+
+        hardware.servo.setPosition(position);
+    }
+    
     public void drive(int encPos, double power) {
         hardware.resetEnc();
 
