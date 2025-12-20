@@ -7,8 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 
-@Disabled // Disabled it for now since I cannot test it, If someone does plan to test this
-// Record a video of the test and remove the @Disabled and remember to push code back to the control hub
+/*@Disabled Disabled it for now since I cannot test it, If someone does plan to test this
+Record a video of the test and remove the @Disabled and remember to push code back to the control hub
+ */
 @Autonomous
 public class EncoderAutoBlueObelisk extends LinearOpMode {
 
@@ -23,7 +24,7 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        /** even tho this is auto, I don't want to use roadrunner for this auto **/
+//        /** even tho this is auto, I don't want to use roadrunner for this auto **/
         hardware.init(hardwareMap, false);
         hardware.resetEnc();
 
@@ -38,9 +39,12 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
             // This is a test if this works we can have this as a backup auto in case you don't have enough time to tune.
             drive(2000, 0.5);
             sleep(2000);
-            turn(-90, 0.5);
+            turn(-45, 0.5);
             sleep(1000);
-            strafe("left", 500, 0.5);
+            servo(0);
+            sleep(1000);
+            rev(0.67, 5);
+
         }
 
     }
