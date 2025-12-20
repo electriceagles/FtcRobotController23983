@@ -25,12 +25,12 @@ public class TeleOpFinal2 extends LinearOpMode {
     public DcMotorEx rr;
 
     public DcMotorEx intake;
-    public Servo servo;
+    public Servo servo; //axon; the one w red sticker is pre programmed, use that
     public DcMotorEx shooter1;
     public DcMotorEx shooter2;
     public DcMotor turret;
 
-    public double powerMult = 0.7;
+    public double powerMult = 0.7; //change this depending on how fast we want robot to be
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
@@ -40,6 +40,7 @@ public class TeleOpFinal2 extends LinearOpMode {
     public static final double SCAN_FREQ  = 0.25;
 
     public boolean turretAuto = true;
+    public boolean manControl = false;
     public double scanStartTime;
 
     @Override
@@ -136,21 +137,33 @@ public class TeleOpFinal2 extends LinearOpMode {
 
             // code for turret
 
-            //manual turret control source
+            //manual turret override
 
-            if (gamepad1.dpad_left) {
-                // overriding the auto scan
-                turretAuto = false; //if the dpad left button pressed, ignores auto scan
-                turret.setPower(-0.6); //TUNE LATER FOR DRIVER EFFICIENCY
-            } else if (gamepad1.dpad_right) {
+            if (gamepad1.cross) {
                 turretAuto = false;
-                turret.setPower(0.6); //TUNE LATER FOR DRIVER EFFICIENCY
-            } else {
+                manControl = true;
+            } else if (gamepad1.triangle){
                 turretAuto = true;
+                manControl = false;
             }
-            //note for driver: only move to manual if auto scan doesn't work
 
-            //automatic turret scan system (uses sin wave's concept to scan left and right)
+            //function for manual control of turret
+
+            if (manControl) {
+                if (gamepad1.dpad_left) {
+                    // overriding the auto scan
+                    turret.setPower(-0.4); //TUNE LATER FOR DRIVER EFFICIENCY
+                } else if (gamepad1.dpad_right) {
+                    turret.setPower(0.4); //TUNE LATER FOR DRIVER EFFICIENCY
+                } else {
+                    turret.setPower(0);
+                }
+                //note for driver: only move to manual if auto scan doesn't work
+            }
+
+
+
+            //automatic turret scan system (uses sin wave concept to scan left and right)
             if (turretAuto) {
                 List<AprilTagDetection> detections = aprilTag.getDetections();
                 boolean tagSeen = detections != null && !detections.isEmpty();
