@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.Range;
 import android.util.Size;
 
 
+import androidx.annotation.Nullable;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -27,6 +29,7 @@ public class EncoderAutoRed extends LinearOpMode {
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
+
     public DcMotorEx turret;
 
     public static final int TARGET_TAG_ID = 24; //  24 for red
@@ -81,7 +84,7 @@ public class EncoderAutoRed extends LinearOpMode {
                 trackTurretToCenter(1.5);
                 strafeInches("left",24,0.5);
                 rev();
-                turret.setPower(0);
+                hardware.turret.setPower(0);
                 if (visionPortal != null) visionPortal.close();
             }
             else {
@@ -90,6 +93,7 @@ public class EncoderAutoRed extends LinearOpMode {
         }
 
     }
+    @Nullable
     private AprilTagDetection getTargetTag() {
         if (aprilTag == null) return null;
 

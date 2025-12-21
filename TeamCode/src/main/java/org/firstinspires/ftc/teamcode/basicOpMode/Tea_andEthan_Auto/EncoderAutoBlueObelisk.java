@@ -81,7 +81,7 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
                 trackTurretToCenter(1.5);
                 strafeInches("right",24,0.5);
                 rev();
-                turret.setPower(0);
+                hardware.turret.setPower(0);
                 if (visionPortal != null) visionPortal.close();
             }
             else {
@@ -109,18 +109,18 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
             AprilTagDetection target = getTargetTag();
 
             if (target != null) {
-                turret.setPower(0);
+                hardware.turret.setPower(0);
                 return true; // found it
             }
 
             double t = getRuntime() - start;
             double s = Math.sin(2 * Math.PI * SCAN_FREQ * t);
-            turret.setPower(SCAN_POWER * Math.signum(s));
+            hardware.turret.setPower(SCAN_POWER * Math.signum(s));
 
             idle(); // important so vision + system threads run
         }
 
-        turret.setPower(0);
+        hardware.turret.setPower(0);
         return false; // timed out
     }
     public boolean trackTurretToCenter(double timeoutSeconds) {
@@ -129,26 +129,26 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         while (opModeIsActive() && (getRuntime() - start) < timeoutSeconds) {
             AprilTagDetection target = getTargetTag();
             if (target == null) {
-                turret.setPower(0);
+                hardware.turret.setPower(0);
                 return false;
             }
 
             double yaw = target.ftcPose.yaw; // degrees (positive/negative depends on camera orientation)
 
             if (Math.abs(yaw) <= YAW_TOL_DEG) {
-                turret.setPower(0);
+                hardware.turret.setPower(0);
                 return true; // centered enough
             }
 
             double power = Range.clip(TURRET_KP * yaw, -MAX_TURRET_POWER, MAX_TURRET_POWER);
 
             // If it turns the wrong direction, flip the sign:
-            turret.setPower(power);
+            hardware.turret.setPower(power);
 
             idle();
         }
 
-        turret.setPower(0);
+        hardware.turret.setPower(0);
         return false;
     }
     public void intake() {
