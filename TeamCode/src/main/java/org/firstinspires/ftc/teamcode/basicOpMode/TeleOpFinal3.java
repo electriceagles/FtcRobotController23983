@@ -16,8 +16,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "Q1 TeleOp - Blue", group = "TeleOp")
-public class TeleOpFinal2 extends LinearOpMode {
+@TeleOp(name = "Q1 TeleOp - Red", group = "TeleOp")
+public class TeleOpFinal3 extends LinearOpMode {
 
     public DcMotorEx lf;
     public DcMotorEx lr;
@@ -34,7 +34,7 @@ public class TeleOpFinal2 extends LinearOpMode {
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
-    public static final int TARGET_TAG_ID = 20; // right now for blue alliance only; 24 for red
+    public static final int TARGET_TAG_ID = 24; // right now for blue alliance only; 24 for red
 
 
     public static final double SCAN_POWER = 0.30;
