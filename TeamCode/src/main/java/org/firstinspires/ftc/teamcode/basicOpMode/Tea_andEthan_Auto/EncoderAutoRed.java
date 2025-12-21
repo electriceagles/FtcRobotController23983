@@ -70,20 +70,23 @@ public class EncoderAutoRed extends LinearOpMode {
 
             if (seen) {
                 trackTurretToCenter(1.5);
-                driveInches(72, 0.5);
+                driveInches(72, 0.25);
                 turn(90, 0.5);
                 rev();
-                sleep(1000);
                 intake();
+                trackTurretToCenter(1.5);
                 rev();
                 strafeInches("right", 24,0.5);
                 intake();
+                trackTurretToCenter(1.5);
                 strafeInches("left",24,0.5);
                 rev();
                 turret.setPower(0);
                 if (visionPortal != null) visionPortal.close();
             }
-
+            else {
+                driveInches(10,0.5);
+            }
         }
 
     }
@@ -152,6 +155,7 @@ public class EncoderAutoRed extends LinearOpMode {
         hardware.intake.setPower(0.67);
         driveInches(36, 0.5);
         hardware.intake.setPower(0);
+        sleep(500);
         driveInches(36, -0.5);
     }
     public void driveInches(double inches, double power) {
@@ -187,6 +191,7 @@ public class EncoderAutoRed extends LinearOpMode {
         hardware.shooterFlyWheel1.setPower(0);
         hardware.shooterFlyWheel2.setPower(0);
         hardware.servo.setPosition(0.5);
+        sleep(1000);
     }
 
     public void drive(int encPos, double power) {
