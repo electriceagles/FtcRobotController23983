@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.basicOpMode.TeaAuto;
+package org.firstinspires.ftc.teamcode.basicOpMode.Tea_andEthan_Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +21,7 @@ import java.util.List;
 Record a video of the test and remove the @Disabled and remember to push code back to the control hub
  */
 @Autonomous
-public class EncoderAutoBlueObelisk extends LinearOpMode {
+public class EncoderAutoRed extends LinearOpMode {
 
     public RobotHardware hardware = new RobotHardware();
 
@@ -29,7 +29,7 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
     public AprilTagProcessor aprilTag;
     public DcMotorEx turret;
 
-    public static final int TARGET_TAG_ID = 20; // right now for blue alliance only; 24 for red
+    public static final int TARGET_TAG_ID = 24; //  24 for red
     public static final double SCAN_POWER = 0.30;
     public static final double SCAN_FREQ  = 0.25;
 
@@ -71,14 +71,14 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
             if (seen) {
                 trackTurretToCenter(1.5);
                 driveInches(72, 0.5);
-                turn(-90, 0.5);
+                turn(90, 0.5);
                 rev();
                 sleep(1000);
                 intake();
                 rev();
-                strafeInches("left", 24,0.5);
+                strafeInches("right", 24,0.5);
                 intake();
-                strafeInches("right",24,0.5);
+                strafeInches("left",24,0.5);
                 rev();
                 turret.setPower(0);
                 if (visionPortal != null) visionPortal.close();
@@ -180,13 +180,13 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         hardware.shooterFlyWheel1.setPower(0.67);
         hardware.shooterFlyWheel2.setPower(0.67);
 
-       sleep((3500));
-       hardware.servo.setPosition(0);
+        sleep((3500));
+        hardware.servo.setPosition(0);
 
-       sleep((3500));
-       hardware.shooterFlyWheel1.setPower(0);
-       hardware.shooterFlyWheel2.setPower(0);
-       hardware.servo.setPosition(0.5);
+        sleep((3500));
+        hardware.shooterFlyWheel1.setPower(0);
+        hardware.shooterFlyWheel2.setPower(0);
+        hardware.servo.setPosition(0.5);
     }
 
     public void drive(int encPos, double power) {
