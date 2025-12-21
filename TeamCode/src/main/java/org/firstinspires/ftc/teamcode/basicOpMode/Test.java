@@ -11,7 +11,7 @@ public class Test extends LinearOpMode {
     private DcMotorEx shooterFlyWheel1;
     private DcMotorEx shooterFlyWheel2;
 
-    private double powerLim = 1.0;
+    private double powerLim = 0.95;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,15 +21,15 @@ public class Test extends LinearOpMode {
         shooterFlyWheel2 = hardwareMap.get(DcMotorEx.class, "sf2");
 
         // Motor directions (adjust if spinning wrong way)
-        shooterFlyWheel1.setDirection(DcMotorSimple.Direction.FORWARD);
-        shooterFlyWheel2.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterFlyWheel1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterFlyWheel2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         waitForStart();
 
         while (opModeIsActive()) {
 
             // Hold B to limit shooter power
-            powerLim = gamepad2.b ? 0.6 : 1.0;
+            powerLim = gamepad2.b ? 0.8 : 0.95;
 
             // Right trigger controls shooter (0.0 → 1.0)
             double shootPower = gamepad2.right_trigger * powerLim;
