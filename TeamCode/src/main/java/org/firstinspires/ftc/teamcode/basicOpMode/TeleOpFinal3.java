@@ -16,7 +16,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "Q1 TeleOp - Red", group = "TeleOp")
+@TeleOp(name = "Q1 TeleOp - red", group = "TeleOp")
 public class TeleOpFinal3 extends LinearOpMode {
 
     public DcMotorEx lf;
@@ -33,13 +33,16 @@ public class TeleOpFinal3 extends LinearOpMode {
     public double powerMult = 0.7; //change this depending on how fast we want robot to be
     public double powerLim = 0.8;
 
+    double lastSeenTagTime = -1;
+
+
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
     public static final int TARGET_TAG_ID = 24; // right now for blue alliance only; 24 for red
 
 
-    public static final double SCAN_POWER = 0.75;
+    public static final double SCAN_POWER = 0.65;
     public static final double SCAN_FREQ  = 0.25;
 
     public boolean turretAuto = true;
@@ -182,10 +185,13 @@ public class TeleOpFinal3 extends LinearOpMode {
                 AprilTagDetection targetTag = getTargetTag(detections);
 
                 if (targetTag != null) {
-                    // correct tag seen → stop scanning
+                    lastSeenTagTime = getRuntime();
+                }
+
+                // hold tag lock for 0.3 seconds
+                if (getRuntime() - lastSeenTagTime < 0.3) {
                     turret.setPower(0);
                 } else {
-                    // no correct tag → keep scanning
                     double t = getRuntime() - scanStartTime;
                     double s = Math.sin(2 * Math.PI * SCAN_FREQ * t);
                     turret.setPower(SCAN_POWER * Math.signum(s));
