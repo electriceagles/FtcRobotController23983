@@ -31,13 +31,15 @@ public class TeleOpFinal3 extends LinearOpMode {
     public DcMotor turret;
 
     public double powerMult = 0.7; //change this depending on how fast we want robot to be
+    public double powerLim = 0.8;
+
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
     public static final int TARGET_TAG_ID = 24; // right now for blue alliance only; 24 for red
 
 
-    public static final double SCAN_POWER = 0.30;
+    public static final double SCAN_POWER = 0.9;
     public static final double SCAN_FREQ  = 0.25;
 
     public boolean turretAuto = true;
@@ -65,8 +67,8 @@ public class TeleOpFinal3 extends LinearOpMode {
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
 
-        shooter1.setDirection(DcMotorSimple.Direction.FORWARD);
-        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         turret = hardwareMap.get(DcMotor.class, "turret");
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -111,11 +113,18 @@ public class TeleOpFinal3 extends LinearOpMode {
             lr.setPower(lrP * powerMult);
             rr.setPower(rrP * powerMult);
 
-            // controller 1 rev up shooter (top right)
+            // controller 1 rev up shooter (bottom right)
+
+            powerLim = gamepad2.circle ? 0.7 : 0.8;
+
+            double shootPower = gamepad2.right_trigger * powerLim;
+
+            shooter1.setPower(shootPower);
+            shooter2.setPower(shootPower);
 
             if (gamepad1.right_bumper) {
-                shooter1.setPower(0.95);
-                shooter2.setPower(0.95);
+                shooter1.setPower(powerLim);
+                shooter2.setPower(powerLim);
             } else {
                 shooter1.setPower(0);
                 shooter2.setPower(0);
@@ -133,7 +142,7 @@ public class TeleOpFinal3 extends LinearOpMode {
 
             // servo system (holding top right moves it 90deg)
             //SERVO SYSTEM MUST BE TUNED LATER TO RIGHT POSITIONS
-            if (gamepad1.right_trigger > 0.1) {
+            if (gamepad1.right_bumper) {
                 servo.setPosition(0.67); // moves servo 120 degrees
             } else {
                 servo.setPosition(0); // moves back to og position
