@@ -72,13 +72,14 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
                 trackTurretToCenter(1.5);
                 driveInches(72, 0.5);
                 turn(-90, 0.5);
-                servo(0);
+                rev();
                 sleep(1000);
-                rev(0.67, 6700);
-                servo(0.5);
-                sleep(1000);
-                intake(0.67,0.67,36,-0.67);
-
+                intake();
+                rev();
+                strafeInches("left", 24,0.5);
+                intake();
+                strafeInches("right",24,0.5);
+                rev();
                 turret.setPower(0);
                 if (visionPortal != null) visionPortal.close();
             }
@@ -147,11 +148,11 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         turret.setPower(0);
         return false;
     }
-    public void intake(double powerI, double powerF, double inches, double powerB) {
-        hardware.intake.setPower(powerI);
-        driveInches(inches, powerF);
+    public void intake() {
+        hardware.intake.setPower(0.67);
+        driveInches(36, 0.5);
         hardware.intake.setPower(0);
-        driveInches(inches, powerB);
+        driveInches(36, -0.5);
     }
     public void driveInches(double inches, double power) {
         int ticks = (int) Math.round(inches * TICKS_PER_INCH);
@@ -173,22 +174,19 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         hardware.rightRear.setPower(0);
     }
 
-    public void rev(double power, double time){
+    public void rev(){
         hardware.resetEnc();
 
-        hardware.shooterFlyWheel1.setPower(power);
-        hardware.shooterFlyWheel2.setPower(power);
+        hardware.shooterFlyWheel1.setPower(0.67);
+        hardware.shooterFlyWheel2.setPower(0.67);
 
-       sleep((long)(time));
+       sleep((3500));
+       hardware.servo.setPosition(0);
 
+       sleep((3500));
        hardware.shooterFlyWheel1.setPower(0);
        hardware.shooterFlyWheel2.setPower(0);
-    }
-
-    public void servo(double position) {
-        hardware.resetEnc();
-
-        hardware.servo.setPosition(position);
+       hardware.servo.setPosition(0.5);
     }
 
     public void drive(int encPos, double power) {
