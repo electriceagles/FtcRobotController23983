@@ -39,7 +39,7 @@ public class TeleOpFinal3 extends LinearOpMode {
     public static final int TARGET_TAG_ID = 24; // right now for blue alliance only; 24 for red
 
 
-    public static final double SCAN_POWER = 0.9;
+    public static final double SCAN_POWER = 0.75;
     public static final double SCAN_FREQ  = 0.25;
 
     public boolean turretAuto = true;
