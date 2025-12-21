@@ -111,8 +111,8 @@ public class TeleOpFinal2 extends LinearOpMode {
             // controller 1 rev up shooter (top right)
 
             if (gamepad1.right_bumper) {
-                shooter1.setPower(1);
-                shooter2.setPower(1);
+                shooter1.setPower(0.95);
+                shooter2.setPower(0.95);
             } else {
                 shooter1.setPower(0);
                 shooter2.setPower(0);
