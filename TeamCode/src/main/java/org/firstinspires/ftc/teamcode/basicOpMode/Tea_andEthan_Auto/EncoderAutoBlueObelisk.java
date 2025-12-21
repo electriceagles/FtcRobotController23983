@@ -152,10 +152,10 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
         return false;
     }
     public void intake() {
-        hardware.intake.setPower(0.67);
+        hardware.intake.setPower(1);
         driveInches(36, 0.5);
+        sleep(5000);
         hardware.intake.setPower(0);
-        sleep(500);
         driveInches(36, -0.5);
     }
     public void driveInches(double inches, double power) {
@@ -181,17 +181,12 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
     public void rev(){
         hardware.resetEnc();
 
-        hardware.shooterFlyWheel1.setPower(0.95);
-        hardware.shooterFlyWheel2.setPower(0.95);
-
-       sleep((2500));
-       hardware.servo.setPosition(0);
-
-       sleep((3000));
+        hardware.shooterFlyWheel1.setPower(0.7);
+        hardware.shooterFlyWheel2.setPower(0.7);
+       sleep((4100));
        hardware.shooterFlyWheel1.setPower(0);
        hardware.shooterFlyWheel2.setPower(0);
-       hardware.servo.setPosition(0.5);
-       sleep(1000);
+       sleep(500);
     }
 
     public void drive(int encPos, double power) {
