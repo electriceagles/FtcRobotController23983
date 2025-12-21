@@ -67,6 +67,8 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
 
             // This is a test if this works we can have this as a backup auto in case you don't have enough time to tune.
             boolean seen = scanTurretUntilTagSeen(2.5);
+            telemetry.addData("Scan result", seen ? "FOUND" : "NOT FOUND");
+            telemetry.update();
 
             if (seen) {
                 trackTurretToCenter(1.5);
@@ -109,6 +111,7 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
             AprilTagDetection target = getTargetTag();
 
             if (target != null) {
+                telemetry.addData("Tag Found?", true);
                 hardware.turret.setPower(0);
                 return true; // found it
             }
@@ -117,10 +120,18 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
             double s = Math.sin(2 * Math.PI * SCAN_FREQ * t);
             hardware.turret.setPower(SCAN_POWER * Math.signum(s));
 
+            telemetry.addData("Scanning", "YES");
+            telemetry.addData("Elapsed", "%.2f / %.2f", (getRuntime() - start), timeoutSeconds);
+            telemetry.update();
+
             idle(); // important so vision + system threads run
         }
 
         hardware.turret.setPower(0);
+        telemetry.addData("Tag Found?", false);
+        telemetry.addData("Result", "Timed out");
+        telemetry.update();
+
         return false; // timed out
     }
     public boolean trackTurretToCenter(double timeoutSeconds) {
