@@ -181,8 +181,8 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
     public void rev(){
         hardware.resetEnc();
 
-        hardware.shooterFlyWheel1.setPower(0.67);
-        hardware.shooterFlyWheel2.setPower(0.67);
+        hardware.shooterFlyWheel1.setPower(0.95);
+        hardware.shooterFlyWheel2.setPower(0.95);
 
        sleep((2500));
        hardware.servo.setPosition(0);
