@@ -71,19 +71,18 @@ public class EncoderAutoRed extends LinearOpMode {
             // This is a test if this works we can have this as a backup auto in case you don't have enough time to tune.
             boolean seen = scanTurretUntilTagSeen(2.5);
             telemetry.addData("Scan result", seen ? "FOUND" : "NOT FOUND");
+            boolean centered = trackTurretToCenter(1.5);
+            telemetry.addData("Center result", centered ? "CENTERED" : "NOT CENTERED");
             telemetry.update();
 
-            if (seen) {
-                trackTurretToCenter(1.5);
+            if (centered) {
                 driveInches(72, 0.25);
                 turn(90, 0.5);
                 rev();
                 intake();
-                trackTurretToCenter(1.5);
                 rev();
                 strafeInches("right", 24,0.5);
                 intake();
-                trackTurretToCenter(1.5);
                 strafeInches("left",24,0.5);
                 rev();
                 hardware.turret.setPower(0);
