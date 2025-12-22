@@ -64,7 +64,7 @@ public class autonBasic extends LinearOpMode {
 
 
         if (opModeIsActive()) {
-            driveInches(6.7, 0.67);
+            drive(500, 0.67);
         }
     }
     private AprilTagDetection getTargetTag() {
