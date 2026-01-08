@@ -16,9 +16,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-/*@Disabled Disabled it for now since I cannot test it, If someone does plan to test this
-Record a video of the test and remove the @Disabled and remember to push code back to the control hub
- */
 @Autonomous
 public class autonIntake extends LinearOpMode {
 
