@@ -40,7 +40,7 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
     public static final double WHEEL_DIAMETER = 4.09;  // Inches
     public static final double TICKS_PER_INCH = TICKS_PER_REV / (Math.PI * WHEEL_DIAMETER);
 
-    public static final double TRACK_WIDTH = 12; // Inches
+    public static final double TRACK_WIDTH = 11.79; // Inches
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -85,8 +85,6 @@ public class EncoderAutoBlueObelisk extends LinearOpMode {
                 hardware.turret.setPower(0);
                 if (visionPortal != null) visionPortal.close();
             }
-            else {
-                driveInches(10,0.5);            }
 
         }
 
