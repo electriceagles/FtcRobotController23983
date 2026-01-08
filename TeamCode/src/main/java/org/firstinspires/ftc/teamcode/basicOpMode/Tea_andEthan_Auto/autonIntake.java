@@ -60,7 +60,7 @@ public class autonIntake extends LinearOpMode {
 
 
         if (opModeIsActive()) {
-            rev();
+            intake();
         }
     }
     private AprilTagDetection getTargetTag() {
