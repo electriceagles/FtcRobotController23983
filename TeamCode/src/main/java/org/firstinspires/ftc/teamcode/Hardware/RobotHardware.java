@@ -37,7 +37,7 @@ public class RobotHardware {
     /* This drive file should only be used for auto */
     public SampleMecanumDrive drive;
 
-    public double powerMult = 1;
+    public double powerMult = 0.7;
     public double shooterLimit = 1;
 
     /* Whenever you guys want to initialize your hardware call this function  */
@@ -64,6 +64,7 @@ public class RobotHardware {
         intake = hardwareMap.get(DcMotorEx.class, "i");
         shooterFlyWheel1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooterFlyWheel2 = hardwareMap.get(DcMotorEx.class, "sf2");
+        servo = hardwareMap.get(Servo.class, "servo");
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -76,9 +77,14 @@ public class RobotHardware {
         rightRear.setDirection(DcMotor.Direction.FORWARD);
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
-
         shooterFlyWheel1.setDirection(DcMotorSimple.Direction.FORWARD);
         shooterFlyWheel2.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        shooterFlyWheel1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterFlyWheel1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        shooterFlyWheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterFlyWheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
 

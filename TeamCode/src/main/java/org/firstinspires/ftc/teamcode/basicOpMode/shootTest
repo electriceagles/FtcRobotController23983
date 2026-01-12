@@ -1,0 +1,128 @@
+package org.firstinspires.ftc.teamcode.basicOpMode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+@TeleOp(name = "Shooter w/ PID", group = "teleOp")
+public class shootTest extends LinearOpMode {
+
+    // shooter motors
+    private DcMotorEx shooter1;
+    private DcMotorEx shooter2;
+
+    // target rpm
+    private double targetRPM = 6000;
+
+    // PID constants
+
+    // kP (gas pedal; increases speed):
+    // Tune FIRST. Controls how hard the shooter pushes to reach target RPM.
+    // Increase kP until the shooter reaches speed quickly but starts to overshoot (RPM goes above the target or sound fluctuate)
+    // then lower it ~20%.
+    private double kP = 0.0005; 
+
+    private double kI = 0.0; //don't change this unless shooter never reaches our target rpm
+
+    // kD (brake pedal):
+    // Tune after kP. Acts like a brake to stop overshoot and oscillation.
+    // Start around kP/4, then increase until RPM settles cleanly with no bouncing.
+    private double kD = 0.000125; 
+
+    // PID state
+    private double shooterIntegral = 0;
+    private double shooterLastError = 0;
+
+    // Encoder tracking
+    private int lastShooterTicks = 0;
+    private double lastShooterTime = 0;
+
+    private static final double TICKS_PER_REV = 28.0; // 6k has this ppr
+
+    @Override
+    public void runOpMode() {
+
+        shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
+        shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
+
+        shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        shooter1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        waitForStart();
+
+        lastShooterTime = getRuntime();
+        lastShooterTicks = shooter1.getCurrentPosition();
+
+        while (opModeIsActive()) {
+
+            //rIGHT BUMPER to spin shooter
+            if (gamepad1.right_bumper) {
+
+                double currentRPM = getShooterRPM();
+                double pidpower = shooterPID(currentRPM);
+
+                shooter1.setPower(pidpower);
+                shooter2.setPower(pidpower);
+
+                telemetry.addData("Target RPM", targetRPM);
+                telemetry.addData("Current RPM", currentRPM);
+                telemetry.addData("Shooter Power", power);
+                telemetry.update();
+
+            } else {
+                shooter1.setPower(0);
+                shooter2.setPower(0);
+
+                shooterIntegral = 0;
+                shooterLastError = 0;
+
+                lastShooterTime = getRuntime();
+                lastShooterTicks = shooter1.getCurrentPosition();
+            }
+        }
+    }
+
+    // Calculates shooter RPM using encoder delta
+    private double getShooterRPM() {
+
+        int currentTicks = shooter1.getCurrentPosition();
+        double currentTime = getRuntime();
+
+        double deltaTicks = currentTicks - lastShooterTicks;
+        double deltaTime = currentTime - lastShooterTime;
+
+        if (deltaTime <= 0) return 0;
+
+        double revolutions = deltaTicks / TICKS_PER_REV;
+        double rpm = (revolutions / deltaTime) * 60.0;
+
+        lastShooterTicks = currentTicks;
+        lastShooterTime = currentTime;
+
+        return Math.abs(rpm);
+    }
+
+    // PID controller for shooter RPM
+    private double shooterPID(double currentRPM) {
+
+        double error = targetRPM - currentRPM;
+
+        shooterIntegral += error;
+        double derivative = error - shooterLastError;
+        shooterLastError = error;
+
+        double output = (kP * error)
+                      + (kI * shooterIntegral)
+                      + (kD * derivative);
+
+        return Math.max(0.0, Math.min(1.0, output));
+    }
+}
