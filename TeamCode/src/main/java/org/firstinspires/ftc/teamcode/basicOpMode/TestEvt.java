@@ -19,10 +19,9 @@ public class TestEvt extends LinearOpMode {
     public DcMotorEx shooter1;
     public DcMotorEx shooter2;
 
-    public double powerMult = 0.7;
-    public double powerLim = 0.8;
+    public double powerMult = 0.9;
 
-    public double s_targetRPM = 4200; // tune later
+    public double s_targetRPM = 5500; // tune later
 
     public double kP = 0.0005;
     public double kI = 0.0;
@@ -31,7 +30,7 @@ public class TestEvt extends LinearOpMode {
     private double shooterIntegral = 0;
     private double shooterLastError = 0;
 
-    private int lastShooterTicks = 0;
+    private double lastShooterTicks = 0;
     private double lastShooterTime = 0;
 
     private static final double TICKS_PER_REV = 28.0;
@@ -58,10 +57,10 @@ public class TestEvt extends LinearOpMode {
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         shooter1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
 
@@ -84,7 +83,17 @@ public class TestEvt extends LinearOpMode {
             lr.setPower((y - x + rx) * powerMult);
             rr.setPower((y + x - rx) * powerMult);
 
-            powerLim = gamepad2.circle ? 0.7 : 0.8;
+
+            //change rpm values:
+            if (gamepad1.triangle){
+                s_targetRPM = 3000;
+            } else if (gamepad1.square){
+                s_targetRPM = 4000;
+            } else if (gamepad1.cross) {
+                s_targetRPM = 6000;
+            } else {
+                s_targetRPM = 5500;
+            }
 
             // Shooter
             if (gamepad1.right_bumper) {
@@ -106,7 +115,7 @@ public class TestEvt extends LinearOpMode {
                 shooterLastError = 0;
 
                 lastShooterTime = getRuntime();
-                lastShooterTicks = shooter1.getCurrentPosition();
+                lastShooterTicks = (shooter1.getCurrentPosition() + shooter2.getCurrentPosition()) / 2.0;
             }
 
             // Intake
@@ -117,18 +126,11 @@ public class TestEvt extends LinearOpMode {
             } else {
                 intake.setPower(0);
             }
-
-            // Servo
-            if (gamepad1.right_bumper) {
-                servo.setPosition(0.67);
-            } else {
-                servo.setPosition(0);
-            }
         }
     }
 
     private double getShooterRPM() {
-        int currentTicks = shooter1.getCurrentPosition();
+        double currentTicks = (shooter1.getCurrentPosition() + shooter2.getCurrentPosition()) / 2.0;
         double currentTime = getRuntime();
 
         double deltaTicks = currentTicks - lastShooterTicks;
