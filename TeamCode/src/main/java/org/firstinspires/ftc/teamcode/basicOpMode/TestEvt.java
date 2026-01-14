@@ -24,7 +24,7 @@ public class TestEvt extends LinearOpMode {
     public double powerMult = 0.9;
     public double powerLim = 0.9;
 
-    public double s_targetRPM = 5400; // tune later
+    public double s_targetRPM = 0; // tune later
 
     public double kP = 0.0005;
     public double kI = 0.0;
@@ -91,6 +91,43 @@ public class TestEvt extends LinearOpMode {
 
             // Shooter
             if (gamepad1.right_bumper) {
+                s_targetRPM = 6000;
+                double currentRPM = getShooterRPM();
+                double pidPower = shooterPID(currentRPM);
+
+                shooter1.setPower(pidPower);
+                shooter2.setPower(pidPower);
+
+                telemetry.addData("Target RPM", s_targetRPM);
+                telemetry.addData("Current RPM", currentRPM);
+                telemetry.addData("Shooter Power", pidPower);
+                telemetry.update();
+            } else if (gamepad1.triangle) {
+                    s_targetRPM = 3000;
+                    double currentRPM = getShooterRPM();
+                    double pidPower = shooterPID(currentRPM);
+
+                    shooter1.setPower(pidPower);
+                    shooter2.setPower(pidPower);
+
+                    telemetry.addData("Target RPM", s_targetRPM);
+                    telemetry.addData("Current RPM", currentRPM);
+                    telemetry.addData("Shooter Power", pidPower);
+                    telemetry.update();
+            }  else if (gamepad1.square) {
+                s_targetRPM = 4000;
+                double currentRPM = getShooterRPM();
+                double pidPower = shooterPID(currentRPM);
+
+                shooter1.setPower(pidPower);
+                shooter2.setPower(pidPower);
+
+                telemetry.addData("Target RPM", s_targetRPM);
+                telemetry.addData("Current RPM", currentRPM);
+                telemetry.addData("Shooter Power", pidPower);
+                telemetry.update();
+            } else if (gamepad1.cross) {
+                s_targetRPM = 5000;
                 double currentRPM = getShooterRPM();
                 double pidPower = shooterPID(currentRPM);
 
