@@ -92,42 +92,24 @@ public class TestEvt extends LinearOpMode {
             // Shooter
             if (gamepad1.right_bumper) {
                 s_targetRPM = 6000;
-                double currentRPM = getShooterRPM();
-                double pidPower = shooterPID(currentRPM);
-
-                shooter1.setPower(pidPower);
-                shooter2.setPower(pidPower);
-
-                telemetry.addData("Target RPM", s_targetRPM);
-                telemetry.addData("Current RPM", currentRPM);
-                telemetry.addData("Shooter Power", pidPower);
-                telemetry.update();
             } else if (gamepad1.triangle) {
                 s_targetRPM = 3000;
-                double currentRPM = getShooterRPM();
-                double pidPower = shooterPID(currentRPM);
-
-                shooter1.setPower(pidPower);
-                shooter2.setPower(pidPower);
-
-                telemetry.addData("Target RPM", s_targetRPM);
-                telemetry.addData("Current RPM", currentRPM);
-                telemetry.addData("Shooter Power", pidPower);
-                telemetry.update();
-            }  else if (gamepad1.square) {
+            } else if (gamepad1.square) {
                 s_targetRPM = 4000;
-                double currentRPM = getShooterRPM();
-                double pidPower = shooterPID(currentRPM);
-
-                shooter1.setPower(pidPower);
-                shooter2.setPower(pidPower);
-
-                telemetry.addData("Target RPM", s_targetRPM);
-                telemetry.addData("Current RPM", currentRPM);
-                telemetry.addData("Shooter Power", pidPower);
-                telemetry.update();
             } else if (gamepad1.cross) {
                 s_targetRPM = 5000;
+            } else {
+                s_targetRPM = 0;
+            }
+
+            if (gamepad1.right_trigger > 0.1) {
+                shooter1.setPower(-1);
+                shooter2.setPower(-1);
+
+                shooterIntegral = 0;
+                shooterLastError = 0;
+                lastPidTime = getRuntime();
+            } else if (s_targetRPM > 0) {
                 double currentRPM = getShooterRPM();
                 double pidPower = shooterPID(currentRPM);
 
@@ -138,9 +120,6 @@ public class TestEvt extends LinearOpMode {
                 telemetry.addData("Current RPM", currentRPM);
                 telemetry.addData("Shooter Power", pidPower);
                 telemetry.update();
-            } else if (gamepad1.right_trigger > 0.1){
-                shooter1.setPower(-1);
-                shooter2.setPower(-1);
             } else {
                 shooter1.setPower(0);
                 shooter2.setPower(0);
