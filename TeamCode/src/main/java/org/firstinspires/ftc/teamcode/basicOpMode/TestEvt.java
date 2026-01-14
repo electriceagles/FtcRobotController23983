@@ -22,7 +22,6 @@ public class TestEvt extends LinearOpMode {
     public DcMotorEx turret;
 
     public double powerMult = 0.9;
-    public double powerLim = 0.9;
 
     public double s_targetRPM = 0; // tune later
 
@@ -86,8 +85,6 @@ public class TestEvt extends LinearOpMode {
             rf.setPower((y - x - rx) * powerMult);
             lr.setPower((y - x + rx) * powerMult);
             rr.setPower((y + x - rx) * powerMult);
-
-            powerLim = gamepad2.circle ? 0.7 : 0.8;
 
             // Shooter
             if (gamepad1.right_bumper) {
