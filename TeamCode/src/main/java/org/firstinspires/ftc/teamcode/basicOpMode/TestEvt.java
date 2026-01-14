@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "Q2 TeleOp", group = "TeleOp")
+@TeleOp(name = "Q2 TeleOp (PID)", group = "TeleOp")
 public class TestEvt extends LinearOpMode {
 
     public DcMotorEx lf;
@@ -60,10 +60,11 @@ public class TestEvt extends LinearOpMode {
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         shooter1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
 
         shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
 
@@ -102,17 +103,17 @@ public class TestEvt extends LinearOpMode {
                 telemetry.addData("Shooter Power", pidPower);
                 telemetry.update();
             } else if (gamepad1.triangle) {
-                    s_targetRPM = 3000;
-                    double currentRPM = getShooterRPM();
-                    double pidPower = shooterPID(currentRPM);
+                s_targetRPM = 3000;
+                double currentRPM = getShooterRPM();
+                double pidPower = shooterPID(currentRPM);
 
-                    shooter1.setPower(pidPower);
-                    shooter2.setPower(pidPower);
+                shooter1.setPower(pidPower);
+                shooter2.setPower(pidPower);
 
-                    telemetry.addData("Target RPM", s_targetRPM);
-                    telemetry.addData("Current RPM", currentRPM);
-                    telemetry.addData("Shooter Power", pidPower);
-                    telemetry.update();
+                telemetry.addData("Target RPM", s_targetRPM);
+                telemetry.addData("Current RPM", currentRPM);
+                telemetry.addData("Shooter Power", pidPower);
+                telemetry.update();
             }  else if (gamepad1.square) {
                 s_targetRPM = 4000;
                 double currentRPM = getShooterRPM();
