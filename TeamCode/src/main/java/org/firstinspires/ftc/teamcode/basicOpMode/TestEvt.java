@@ -93,6 +93,8 @@ public class TestEvt extends LinearOpMode {
                 s_targetRPM = 5000;
             } else if (gamepad1.circle){
                 s_targetRPM = 6000;
+            } else {
+                s_targetRPM = 0;
             }
 
             // Shooter
