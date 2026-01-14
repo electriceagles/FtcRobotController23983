@@ -21,7 +21,7 @@ public class TestEvt extends LinearOpMode {
 
     public double powerMult = 0.9;
 
-    public double s_targetRPM = 5500; // tune later
+    public double s_targetRPM = 0; // tune later
 
     public double kP = 0.0005;
     public double kI = 0.0;
@@ -90,13 +90,13 @@ public class TestEvt extends LinearOpMode {
             } else if (gamepad1.square){
                 s_targetRPM = 4000;
             } else if (gamepad1.cross) {
+                s_targetRPM = 5000;
+            } else if (gamepad1.circle){
                 s_targetRPM = 6000;
-            } else {
-                s_targetRPM = 5500;
             }
 
             // Shooter
-            if (gamepad1.right_bumper) {
+            if (s_targetRPM > 0) {
                 double currentRPM = getShooterRPM();
                 double pidPower = shooterPID(currentRPM);
 
