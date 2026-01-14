@@ -32,14 +32,13 @@ public class Q2TeleOpDraft extends LinearOpMode {
     public DcMotorEx shooter2;
     public DcMotor turret;
 
-    public double powerMult = 0.7;
-    public double powerLim = 0.8;
+    public double powerMult = 0.9;
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
     public static final int at = 24; // 24 for red?
 
-    public static final double SCAN_POWER = 0.65;
+    public static final double SCAN_POWER = 0.8;
     public static final double SCAN_FREQ  = 0.25;
 
     public boolean turretAuto = true;
@@ -151,7 +150,6 @@ public class Q2TeleOpDraft extends LinearOpMode {
             rr.setPower(rrP * powerMult);
 
             //power limiting w button b
-            powerLim = gamepad2.circle ? 0.7 : 0.8;
 
             if (gamepad1.right_bumper) {
 
@@ -195,8 +193,8 @@ public class Q2TeleOpDraft extends LinearOpMode {
             }
 
             // servo system
-            if (gamepad1.right_bumper) {
-                servo.setPosition(0.67);
+            if (gamepad1.right_trigger > 0.1) {
+                servo.setPosition(gamepad1.right_trigger);
             } else {
                 servo.setPosition(0);
             }
