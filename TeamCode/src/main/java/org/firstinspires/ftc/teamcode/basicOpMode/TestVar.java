@@ -14,15 +14,14 @@ public class TestVar extends LinearOpMode {
 
     // Mechanisms
     public DcMotorEx intake;
+
+    public DcMotorEx turret;
     public DcMotorEx shooter1, shooter2;
     public Servo servo;
 
     public double powerMult = 0.9;
 
-    // Shooter PID
     public double power = 0;
-
-    private static final double TICKS_PER_REV = 28.0;
 
     @Override
     public void runOpMode() {
@@ -43,6 +42,8 @@ public class TestVar extends LinearOpMode {
         servo = hardwareMap.get(Servo.class, "servo");
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
+
+        turret = hardwareMap.get(DcMotorEx.class, "turret");
 
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -73,20 +74,30 @@ public class TestVar extends LinearOpMode {
 
             // ===== SHOOTER SPEED =====
             if (gamepad1.triangle) {
-                power = 0.5;
+                power = 0.1;
             } else if (gamepad1.square) {
-                power = 0.67;
+                power = 0.2;
             } else if (gamepad1.cross) {
-                power = 0.83;
+                power = 0.34;
             } else if (gamepad1.right_bumper) {
                 power = 1;
             } else {
                 power = 0;
             }
 
-            // Shooter PID
             shooter1.setPower(power);
             shooter2.setPower(power);
+
+            if (gamepad1.dpad_right){
+                turret.setPower(-0.8);
+            } else if (gamepad1.dpad_left) {
+                turret.setPower(0.8);
+            } else {
+                turret.setPower(0);
+            }
+
+            // Shooter PID
+
 
             if (gamepad1.right_trigger > 0.1){
                 shooter1.setPower(-1);

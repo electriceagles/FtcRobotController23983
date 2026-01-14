@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Q2 TeleOp", group = "TeleOp")
 public class TestEvt extends LinearOpMode {
@@ -15,7 +14,6 @@ public class TestEvt extends LinearOpMode {
     public DcMotorEx rr;
 
     public DcMotorEx intake;
-    public Servo servo;
     public DcMotorEx shooter1;
     public DcMotorEx shooter2;
 
@@ -29,8 +27,11 @@ public class TestEvt extends LinearOpMode {
     public double kI = 0.0;
     public double kD = 0.00012;
 
+    private double lastPidTime = 0;
+
     private double shooterIntegral = 0;
     private double shooterLastError = 0;
+
 
     private int lastShooterTicks = 0;
     private double lastShooterTime = 0;
@@ -52,7 +53,6 @@ public class TestEvt extends LinearOpMode {
         rr.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake = hardwareMap.get(DcMotorEx.class, "i");
-        servo = hardwareMap.get(Servo.class, "servo");
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
 
@@ -69,6 +69,8 @@ public class TestEvt extends LinearOpMode {
 
         lastShooterTime = getRuntime();
         lastShooterTicks = shooter1.getCurrentPosition();
+
+        lastPidTime = getRuntime();
 
         while (opModeIsActive()) {
 
@@ -144,6 +146,7 @@ public class TestEvt extends LinearOpMode {
 
                 shooterIntegral = 0;
                 shooterLastError = 0;
+                lastPidTime = getRuntime();
 
                 lastShooterTime = getRuntime();
                 lastShooterTicks = shooter1.getCurrentPosition();
@@ -158,12 +161,6 @@ public class TestEvt extends LinearOpMode {
                 intake.setPower(0);
             }
 
-            // Servo
-            if (gamepad1.right_bumper) {
-                servo.setPosition(0.67);
-            } else {
-                servo.setPosition(0);
-            }
 
             if (gamepad1.dpad_left) {
                 turret.setPower(0.4);
@@ -176,7 +173,7 @@ public class TestEvt extends LinearOpMode {
     }
 
     private double getShooterRPM() {
-        int currentTicks = shooter1.getCurrentPosition();
+        int currentTicks = (shooter1.getCurrentPosition() + shooter2.getCurrentPosition()) / 2;
         double currentTime = getRuntime();
 
         double deltaTicks = currentTicks - lastShooterTicks;
@@ -195,10 +192,17 @@ public class TestEvt extends LinearOpMode {
 
     private double shooterPID(double currentRPM) {
         double error = s_targetRPM - currentRPM;
+        double now = getRuntime();
+        double dt = now - lastPidTime;
 
-        shooterIntegral += error;
-        double derivative = error - shooterLastError;
+        if (dt <= 0) dt = 0.02;
+
+        shooterIntegral += error * dt;
+
+        double derivative = (error - shooterLastError) / dt;
         shooterLastError = error;
+
+        lastPidTime = now;
 
         double output = (kP * error) + (kI * shooterIntegral) + (kD * derivative);
         return Math.max(0.0, Math.min(1.0, output));
