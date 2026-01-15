@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.basicOpMode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -60,11 +61,11 @@ public class TestEvt extends LinearOpMode {
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         shooter1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooter1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 
         shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -111,14 +112,14 @@ public class TestEvt extends LinearOpMode {
                 lastPidTime = getRuntime();
             } else if (s_targetRPM > 0) {
                 double currentRPM = getShooterRPM();
-                double pidPower = shooterPID(currentRPM);
+                double pidPower = shooterPID(s_targetRPM, currentRPM);
 
                 shooter1.setPower(pidPower);
                 shooter2.setPower(pidPower);
 
                 telemetry.addData("Target RPM", s_targetRPM);
                 telemetry.addData("Current RPM", currentRPM);
-                telemetry.addData("Shooter Power", pidPower);
+                telemetry.addData("Shooter Power being pushed rn", pidPower);
                 telemetry.update();
             } else {
                 shooter1.setPower(0);
@@ -170,18 +171,17 @@ public class TestEvt extends LinearOpMode {
         return Math.abs(rpm);
     }
 
-    private double shooterPID(double currentRPM) {
-        double error = s_targetRPM - currentRPM;
+    private double shooterPID(double targetRPM, double currentRPM) {
         double now = getRuntime();
         double dt = now - lastPidTime;
-
         if (dt <= 0) dt = 0.02;
+
+        double error = targetRPM - currentRPM;
 
         shooterIntegral += error * dt;
 
         double derivative = (error - shooterLastError) / dt;
         shooterLastError = error;
-
         lastPidTime = now;
 
         double output = (kP * error) + (kI * shooterIntegral) + (kD * derivative);
