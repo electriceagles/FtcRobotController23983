@@ -88,9 +88,9 @@ public class TestVar extends LinearOpMode {
             shooter2.setPower(power);
 
             if (gamepad1.dpad_right){
-                turret.setPower(-0.8);
+                turret.setPower(-0.4);
             } else if (gamepad1.dpad_left) {
-                turret.setPower(0.8);
+                turret.setPower(0.4);
             } else {
                 turret.setPower(0);
             }
