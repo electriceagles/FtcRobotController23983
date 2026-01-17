@@ -98,11 +98,6 @@ public class TestVar extends LinearOpMode {
             // Shooter PID
 
 
-            if (gamepad1.right_trigger > 0.1){
-                shooter1.setPower(-1);
-                shooter2.setPower(-1);
-            }
-
             // ===== INTAKE =====
             if (gamepad1.left_trigger > 0.1) {
                 intake.setPower(1);
