@@ -48,10 +48,6 @@ public class TestVar extends LinearOpMode {
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        shooter1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
 
@@ -67,20 +63,23 @@ public class TestVar extends LinearOpMode {
             if (Math.abs(x) < 0.05) x = 0;
             if (Math.abs(rx) < 0.05) rx = 0;
 
-            lf.setPower((y + x + rx) * powerMult);
-            rf.setPower((y - x - rx) * powerMult);
-            lr.setPower((y - x + rx) * powerMult);
-            rr.setPower((y + x - rx) * powerMult);
+            lf.setPower((y + x + rx * 0.8) * powerMult);
+            rf.setPower((y - x - rx * 0.8) * powerMult);
+            lr.setPower((y - x + rx * 0.8) * powerMult);
+            rr.setPower((y + x - rx * 0.8) * powerMult);
 
             // ===== SHOOTER SPEED =====
+            double b = gamepad1.right_trigger;
             if (gamepad1.triangle) {
-                power = 0.1;
+                power = 0.4;
             } else if (gamepad1.square) {
-                power = 0.2;
+                power = 0.6;
             } else if (gamepad1.cross) {
-                power = 0.34;
+                power = 0.7;
             } else if (gamepad1.right_bumper) {
-                power = 1;
+                power = 0.45;
+            } else if (gamepad1.right_trigger > 0.1) {
+                power = -b;
             } else {
                 power = 0;
             }
