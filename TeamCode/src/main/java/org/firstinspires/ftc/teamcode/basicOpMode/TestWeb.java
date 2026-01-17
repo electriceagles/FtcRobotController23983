@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -16,66 +17,63 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "Q2 TeleOp + Webcam", group = "TeleOp")
+@TeleOp(name = "Q2 TeleOp maybe", group = "TeleOp")
 public class TestWeb extends LinearOpMode {
 
-    public DcMotorEx lf;
-    public DcMotorEx lr;
-    public DcMotorEx rf;
-    public DcMotorEx rr;
+    // ================= DRIVE =================
+    DcMotorEx lf, lr, rf, rr;
+    double powerMult = 0.9;
 
-    public DcMotorEx turret;
+    // ================= MECHANISMS =================
+    DcMotorEx intake;
+    DcMotorEx turret;
+    DcMotorEx shooter1, shooter2;
+    Servo servo;
 
-    public DcMotorEx intake;
-    public Servo servo;
-    public DcMotorEx shooter1;
-    public DcMotorEx shooter2;
+    // ================= VISION =================
+    VisionPortal visionPortal;
+    AprilTagProcessor aprilTag;
 
-    public double powerMult = 0.9;
+    static final int TARGET_TAG_ID = 20;
 
-    public VisionPortal visionPortal;
-    public AprilTagProcessor aprilTag;
-    public static final int at = 24; // 24 for red?
+    // ================= TURRET CONSTANTS =================
+    static final double TICKS_PER_REV = 537.7;   // goBILDA 5202
+    static final double GEAR_RATIO = 5.0;
+    static final double TICKS_PER_DEGREE =
+            (TICKS_PER_REV * GEAR_RATIO) / 360.0;
 
-    public static double SCAN_POWER = 0;
-    public static final double SCAN_FREQ  = 0.25;
+    static final double TARGET_YAW = 0.0;
+    static final double YAW_TOLERANCE = 0.6;
 
-    public boolean turretAuto = false;
-    public boolean manControl = true;
-    public double scanStartTime;
+    static final double SCAN_POWER = 0.4;
+    static final double SCAN_RANGE_DEG = 60.0;
+    static final double SCAN_RANGE_TICKS =
+            SCAN_RANGE_DEG * TICKS_PER_DEGREE;
 
-    public double lastSeenTagTime = 0;
+    double scanCenterTicks = 0;
 
+    // ================= PID =================
+    double Kp = 0.008;
+    double Ki = 0.0;
+    double Kd = 0.001;
 
-    public double s_targetRPM = 0; // tune later
+    double integralSum = 0;
+    double lastError = 0;
+    ElapsedTime pidTimer = new ElapsedTime();
 
-    public double kP = 0.0005;
-    public double kI = 0.0;
-    public double kD = 0.00012;
+    boolean turretAuto = false;
+    boolean manControl = true;
 
-    private double shooterIntegral = 0;
-    private double shooterLastError = 0;
-
-    private double lastShooterTicks = 0;
-    private double lastShooterTime = 0;
-
-    private static final double TICKS_PER_REV = 28.0;
-
-    // basically if it detects a tag, it checks if it's the one we need
-    private AprilTagDetection getTargetTag(List<AprilTagDetection> detections) { //lists all detections and checks, this the target tag function we use later
-        if (detections == null) return null;
-
-        for (AprilTagDetection tag : detections) { //checks each; for loop
-            if (tag.id == at) {
-                return tag; // stops loop
-            }
-        }
-        return null; //only if detection didnt detect nun return null
-    }
+    // ================= SHOOTER VELOCITIES =================
+    static final double RPM_3000 = 1400;
+    static final double RPM_3200 = 1493;
+    static final double RPM_3900 = 1820;
+    static final double RPM_4700 = 2193;
 
     @Override
     public void runOpMode() {
 
+        // ---------- Drive ----------
         lf = hardwareMap.get(DcMotorEx.class, "lf");
         lr = hardwareMap.get(DcMotorEx.class, "lr");
         rf = hardwareMap.get(DcMotorEx.class, "rf");
@@ -86,18 +84,23 @@ public class TestWeb extends LinearOpMode {
         rf.setDirection(DcMotorSimple.Direction.REVERSE);
         rr.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        // ---------- Mechanisms ----------
         intake = hardwareMap.get(DcMotorEx.class, "i");
-        servo = hardwareMap.get(Servo.class, "servo");
+        turret = hardwareMap.get(DcMotorEx.class, "turret");
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
+        servo = hardwareMap.get(Servo.class, "servo");
 
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        turret = hardwareMap.get(DcMotorEx.class, "turret");
-        turret.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        // ---------- Vision ----------
         aprilTag = new AprilTagProcessor.Builder().build();
         WebcamName webcam = hardwareMap.get(WebcamName.class, "webcam");
 
@@ -108,23 +111,14 @@ public class TestWeb extends LinearOpMode {
                 .addProcessor(aprilTag)
                 .build();
 
-        shooter1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        visionPortal.setProcessorEnabled(aprilTag, true);
 
         waitForStart();
 
-        lastShooterTime = getRuntime();
-        lastShooterTicks = shooter1.getCurrentPosition();
-
-        scanStartTime = getRuntime();
-        lastSeenTagTime = getRuntime();
-
+        // ==================================================
         while (opModeIsActive()) {
 
-            // Drive
+            // ================= DRIVE =================
             double y = gamepad1.left_stick_y;
             double x = -gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
@@ -138,44 +132,35 @@ public class TestWeb extends LinearOpMode {
             lr.setPower((y - x + rx) * powerMult);
             rr.setPower((y + x - rx) * powerMult);
 
+            // ================= SHOOTER RPM =================
+            double targetVelocity = 0;
 
-            //change rpm values:
-            if (gamepad1.triangle){
-                s_targetRPM = 3000;
-            } else if (gamepad1.square){
-                s_targetRPM = 4000;
+            if (gamepad1.right_bumper) {
+                targetVelocity = RPM_3200;
+            } else if (gamepad1.triangle) {
+                targetVelocity = RPM_3000;
+            } else if (gamepad1.square) {
+                targetVelocity = RPM_3900;
             } else if (gamepad1.cross) {
-                s_targetRPM = 5000;
-            } else if (gamepad1.right_bumper) {
-                s_targetRPM = 6000;
-            } else {
-                s_targetRPM = 0;
+                targetVelocity = RPM_4700;
             }
 
-            // Shooter
-            if (s_targetRPM > 0) {
-                double currentRPM = getShooterRPM();
-                double pidPower = shooterPID(currentRPM);
-
-                shooter1.setPower(pidPower);
-                shooter2.setPower(pidPower);
-
-                telemetry.addData("Target RPM", s_targetRPM);
-                telemetry.addData("Current RPM", currentRPM);
-                telemetry.addData("Shooter Power", pidPower);
-                telemetry.update();
+            if (targetVelocity > 0) {
+                shooter1.setVelocity(targetVelocity);
+                shooter2.setVelocity(targetVelocity);
             } else {
                 shooter1.setPower(0);
                 shooter2.setPower(0);
-
-                shooterIntegral = 0;
-                shooterLastError = 0;
-
-                lastShooterTime = getRuntime();
-                lastShooterTicks = (shooter1.getCurrentPosition() + shooter2.getCurrentPosition()) / 2.0;
             }
 
-            // Intake
+            // ================= FEED =================
+            if (gamepad1.right_trigger > 0.1) {
+                servo.setPosition(1.0); // feed
+            } else {
+                servo.setPosition(0.0); // retract
+            }
+
+            // ================= INTAKE =================
             if (gamepad1.left_trigger > 0.1) {
                 intake.setPower(1);
             } else if (gamepad1.left_bumper) {
@@ -184,85 +169,86 @@ public class TestWeb extends LinearOpMode {
                 intake.setPower(0);
             }
 
+            // ================= AUTO START =================
             if (gamepad1.dpadUpWasPressed()) {
-                SCAN_POWER = 0.8;
                 turretAuto = true;
                 manControl = false;
-            } else if (gamepad1.dpadDownWasPressed()) {
-                SCAN_POWER = -0.8;
-                turretAuto = true;
-                manControl = false;
-            } else if (gamepad1.rightBumperWasReleased() || gamepad1.triangleWasReleased() || gamepad1.squareWasReleased() || gamepad1.crossWasReleased()) {
-                manControl = true;
-                turretAuto = false;
+                integralSum = 0;
+                lastError = 0;
+                pidTimer.reset();
+                scanCenterTicks = turret.getCurrentPosition();
             }
 
+            // ================= TURRET AUTO =================
             if (turretAuto) {
+
                 List<AprilTagDetection> detections = aprilTag.getDetections();
-                AprilTagDetection targetTag = getTargetTag(detections);
+                AprilTagDetection targetTag = null;
+
+                for (AprilTagDetection tag : detections) {
+                    if (tag.id == TARGET_TAG_ID) {
+                        targetTag = tag;
+                        break;
+                    }
+                }
 
                 if (targetTag != null) {
-                    lastSeenTagTime = getRuntime();
+
+                    double yaw = targetTag.ftcPose.yaw;
+                    double yawError = TARGET_YAW - yaw;
+
+                    double targetTicks =
+                            turret.getCurrentPosition()
+                                    + (yawError * TICKS_PER_DEGREE);
+
+                    double error = targetTicks - turret.getCurrentPosition();
+
+                    double dt = pidTimer.seconds();
+                    if (dt <= 0) dt = 1e-3;
+                    pidTimer.reset();
+
+                    integralSum += error * dt;
+                    double derivative = (error - lastError) / dt;
+
+                    double output =
+                            (Kp * error) +
+                                    (Ki * integralSum) +
+                                    (Kd * derivative);
+
+                    output = Math.max(-0.5, Math.min(0.5, output));
+                    turret.setPower(output);
+                    lastError = error;
+
+                    if (Math.abs(yaw) < YAW_TOLERANCE) {
+                        turret.setPower(0);
+                        turretAuto = false;
+                        manControl = true;
+                    }
+
+                } else {
+                    double pos = turret.getCurrentPosition();
+                    double leftLimit = scanCenterTicks - SCAN_RANGE_TICKS;
+                    double rightLimit = scanCenterTicks + SCAN_RANGE_TICKS;
+
+                    if (SCAN_POWER > 0 && pos >= rightLimit) {
+                        turret.setPower(0);
+                    } else {
+                        turret.setPower(SCAN_POWER);
+                    }
                 }
 
-                if (getRuntime() - lastSeenTagTime < 0.3) {
-                    turret.setPower(0);
-                } else {
-                    double t = getRuntime() - scanStartTime;
-                    double s = Math.sin(2 * Math.PI * SCAN_FREQ * t);
-                    turret.setPower(SCAN_POWER * Math.signum(s));
-                }
             }
 
+            // ================= MANUAL TURRET =================
+            else if (manControl) {
+                if (gamepad1.dpad_left) {
+                    turret.setPower(0.8);
+                } else if (gamepad1.dpad_right) {
+                    turret.setPower(-0.8);
+                } else {
+                    turret.setPower(0);
+                }
+            }
         }
-        turret.setPower(0);
-        if (visionPortal != null) visionPortal.close();
-    }
-
-    private double getShooterRPM() {
-        double currentTicks = (shooter1.getCurrentPosition() + shooter2.getCurrentPosition()) / 2.0;
-        double currentTime = getRuntime();
-
-        double deltaTicks = currentTicks - lastShooterTicks;
-        double deltaTime = currentTime - lastShooterTime;
-
-        if (deltaTime <= 0) return 0;
-
-        double revolutions = deltaTicks / TICKS_PER_REV;
-        double rpm = (revolutions / deltaTime) * 60.0;
-
-        lastShooterTicks = currentTicks;
-        lastShooterTime = currentTime;
-
-        return Math.abs(rpm);
-    }
-
-    //also:
-    //P term: pushes harder the farther we are from target rpm
-    //D term: reacts to the change in error (damps overshoot / oscillation)
-
-    //actually applying pid for shooter
-    private double shooterPID(double currentRPM) {
-
-        //our error
-        double error = s_targetRPM - currentRPM;
-
-
-        //accumulation of error over time (net change)
-        shooterIntegral += error;
-
-        //looks at how quickly the error is changing and helps brake so its not overpowered
-        double derivative = error - shooterLastError;
-
-        //save error for next calculation
-        shooterLastError = error;
-
-        // Combine PID terms into one value; formula: output = kP + kI + kD
-        double output = (kP * error) + (kI * shooterIntegral) + (kD * derivative);
-
-        //max motor power is 1
-        output = Math.max(0.0, Math.min(1.0, output));
-
-        return output; //makes shooterPID the value after getting all those numbers tg
     }
 }
