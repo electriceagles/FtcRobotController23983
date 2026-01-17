@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.basicOpMode.Tea_andEthan_Auto;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @Autonomous
+@Disabled
 public class autonIntake extends LinearOpMode {
 
     public RobotHardware hardware = new RobotHardware();

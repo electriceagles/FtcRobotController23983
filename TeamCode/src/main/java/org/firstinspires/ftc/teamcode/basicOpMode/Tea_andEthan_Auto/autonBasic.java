@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.basicOpMode.Tea_andEthan_Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
@@ -21,6 +22,7 @@ import java.util.List;
 Record a video of the test and remove the @Disabled and remember to push code back to the control hub
  */
 @Autonomous
+@Disabled
 public class autonBasic extends LinearOpMode {
 
     public RobotHardware hardware = new RobotHardware();
