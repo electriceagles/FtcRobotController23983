@@ -9,7 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 
 import org.firstinspires.ftc.teamcode.basicOpMode.FlywheelLogic;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -17,16 +21,23 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Disabled
 @TeleOp
 public class pedroPathscal extends OpMode {
+
+
+    public DcMotorEx intake;
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-
     //FLYWHEEL LOGIC SETUP
     private FlywheelLogic shooter = new FlywheelLogic();
     private boolean shotsTriggered = false;
+    private RobotHardware hardware;
 
     public enum PathState{
         Drive_Start2Shoot,
         ShootPreload,
+        ShootPreload2,
+        Intake1,
+        InOutTake1,
+        Intake2,
 
     }
     PathState pathState;
@@ -79,15 +90,52 @@ public class pedroPathscal extends OpMode {
                 setPathState(PathState.ShootPreload );
                 break;
             case ShootPreload:
-                if (!follower.isBusy()){
+                shooter.setTargetRPM(4200);
 
-                    //ToDo add flywheelLogic
-                    if (!shotsTriggered){
+                if (shooter.atSpeed() && !shotsTriggered) {
+                    hardware.servo.setPosition(0.67);
+                    shotsTriggered = true;
+                    pathTimer.resetTimer();
+                }
 
-                    }
-                    telemetry.addLine("First Path Done :)");
+                if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                    hardware.servo.setPosition(0);
+                    shooter.stop();
+                    setPathState(PathState.Intake1);
                 }
                 break;
+            case Intake1:
+                    intake.setPower(1);
+                    follower.followPath(intake1in, true);
+                    intake.setPower(0);
+                    setPathState(PathState.InOutTake1);
+                    break;
+            case InOutTake1:
+                follower.followPath(intake1out, true);
+                setPathState(PathState.ShootPreload2);
+                break;
+           case ShootPreload2:
+               shooter.setTargetRPM(4200);
+
+               if (shooter.atSpeed() && !shotsTriggered) {
+                   hardware.servo.setPosition(0.67);
+                   shotsTriggered = true;
+                   pathTimer.resetTimer();
+               }
+
+               if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                   hardware.servo.setPosition(0);
+                   shooter.stop();
+                   setPathState(PathState.Intake2);
+               }
+               break;
+
+            case Intake2:
+                intake.setPower(1);
+                follower.followPath(intake2in);
+                intake.setPower(0);
+                break;
+
             default:
                 telemetry.addLine("No Command :(");
                 break;
@@ -108,10 +156,6 @@ public class pedroPathscal extends OpMode {
         opModeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         shooter.init(hardwareMap);
-
-        buildPaths();
-        follower.setPose(startPose);
-
     }
     public void start(){
         opModeTimer.resetTimer();
