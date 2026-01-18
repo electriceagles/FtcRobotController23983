@@ -70,7 +70,7 @@ public class TeleV1 extends LinearOpMode {
             if (gamepad1.triangle) {
                 power = 0.42;
             } else if (gamepad1.square) {
-                power = 0.584;
+                power = 0.6;
             } else if (gamepad1.cross) {
                 power = 0.7;
             } else if (gamepad1.right_bumper) {
