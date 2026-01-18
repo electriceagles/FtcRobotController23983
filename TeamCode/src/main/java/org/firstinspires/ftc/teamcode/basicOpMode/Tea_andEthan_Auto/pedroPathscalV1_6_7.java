@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Disabled
 @TeleOp
-public class pedroPathscalV1.6.7 extends OpMode {
+public class pedroPathscalV1_6_7 extends OpMode {
 
 
     public DcMotorEx intake;
