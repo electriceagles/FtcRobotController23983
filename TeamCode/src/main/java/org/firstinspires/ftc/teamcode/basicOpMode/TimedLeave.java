@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Simple Leave (Far Zone)", group = "Autonomous")
+@Autonomous(name = "Simple Leave (Far Zone; v2)", group = "Autonomous")
 public class TimedLeave extends LinearOpMode {
 
     DcMotorEx lf, lr, rf, rr;
