@@ -43,7 +43,7 @@ public class TentativeAuton extends LinearOpMode {
         }
 
         stopDrive();
-        sleep(300);
+        sleep(1700);
 
         // back to base
         while (opModeIsActive() && odo.getPosY(DistanceUnit.INCH) > 0) {
