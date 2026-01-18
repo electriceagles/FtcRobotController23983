@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Simple Leave (Far Zone)", group = "Autonomous")
-public class TimedLeave extends LinearOpMode {
+@Autonomous(name = "Leave + Strafe Left (Blue)", group = "Autonomous")
+public class BlueClose extends LinearOpMode {
 
     DcMotorEx lf, lr, rf, rr;
 
@@ -27,13 +27,22 @@ public class TimedLeave extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        // ===== DRIVE FORWARD =====
-        lf.setPower(0.4);
+        // ===== DRIVE BACKWARD =====
+        lf.setPower(-0.4);
+        lr.setPower(-0.4);
+        rf.setPower(-0.4);
+        rr.setPower(-0.4);
+
+        sleep(3000); // adjust if needed
+
+        // ===== STRAFE LEFT =====
+        // Mecanum strafe left:
+        lf.setPower(-0.4);
         lr.setPower(0.4);
         rf.setPower(0.4);
-        rr.setPower(0.4);
+        rr.setPower(-0.4);
 
-        sleep(2500); // drive for 4 seconds
+        sleep(200); // 0.2 seconds
 
         // ===== STOP =====
         lf.setPower(0);
