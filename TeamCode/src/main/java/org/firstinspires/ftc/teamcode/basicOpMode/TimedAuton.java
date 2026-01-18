@@ -33,7 +33,7 @@ public class TimedAuton extends LinearOpMode {
         rf.setPower(0.4);
         rr.setPower(0.4);
 
-        sleep(3000); // drive forward for 3 seconds
+        sleep(1100); // drive forward for 3 seconds
 
         stopDrive();
         sleep(500);
@@ -44,7 +44,7 @@ public class TimedAuton extends LinearOpMode {
         rf.setPower(-0.4);
         rr.setPower(-0.4);
 
-        sleep(3000); // drive backward for 3 seconds
+        sleep(670); // drive backward for 3 seconds
 
         stopDrive();
     }

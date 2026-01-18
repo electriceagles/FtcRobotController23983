@@ -33,7 +33,7 @@ public class TimedLeave extends LinearOpMode {
         rf.setPower(-0.4);
         rr.setPower(-0.4);
 
-        sleep(1500); // drive for 4 seconds
+        sleep(1100); // drive for 4 seconds
 
         // ===== STOP =====
         lf.setPower(0);
