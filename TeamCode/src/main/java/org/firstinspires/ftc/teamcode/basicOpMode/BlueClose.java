@@ -28,19 +28,19 @@ public class BlueClose extends LinearOpMode {
         if (isStopRequested()) return;
 
         // ===== DRIVE BACKWARD =====
-        lf.setPower(-0.4);
-        lr.setPower(-0.4);
-        rf.setPower(-0.4);
-        rr.setPower(-0.4);
+        lf.setPower(0.4);
+        lr.setPower(0.4);
+        rf.setPower(0.4);
+        rr.setPower(0.4);
 
-        sleep(3000); // adjust if needed
+        sleep(2500); // adjust if needed
 
         // ===== STRAFE LEFT =====
         // Mecanum strafe left:
-        lf.setPower(-0.4);
-        lr.setPower(0.4);
-        rf.setPower(0.4);
-        rr.setPower(-0.4);
+        lf.setPower(0.4);
+        lr.setPower(-0.4);
+        rf.setPower(-0.4);
+        rr.setPower(0.4);
 
         sleep(200); // 0.2 seconds
 

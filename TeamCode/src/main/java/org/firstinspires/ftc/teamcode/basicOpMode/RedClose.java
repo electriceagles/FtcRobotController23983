@@ -27,14 +27,22 @@ public class RedClose extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        // ===== STRAFE RIGHT =====
-        // Standard mecanum strafe right
+        // ===== DRIVE BACKWARD =====
         lf.setPower(0.4);
-        lr.setPower(-0.4);
-        rf.setPower(-0.4);
+        lr.setPower(0.4);
+        rf.setPower(0.4);
         rr.setPower(0.4);
 
-        sleep(200); // 0.2 seconds
+        sleep(2500); // adjust if needed
+
+        // ===== STRAFE RIGHT =====
+        // Standard mecanum strafe right
+        lf.setPower(-0.4);
+        lr.setPower(0.4);
+        rf.setPower(0.4);
+        rr.setPower(-0.4);
+
+        sleep(2500); // 0.2 seconds
 
         // ===== STOP =====
         lf.setPower(0);
