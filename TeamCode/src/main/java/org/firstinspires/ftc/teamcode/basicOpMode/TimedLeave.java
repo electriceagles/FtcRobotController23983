@@ -28,12 +28,12 @@ public class TimedLeave extends LinearOpMode {
         if (isStopRequested()) return;
 
         // ===== DRIVE FORWARD =====
-        lf.setPower(0.4);
-        lr.setPower(0.4);
-        rf.setPower(0.4);
-        rr.setPower(0.4);
+        lf.setPower(-0.4);
+        lr.setPower(-0.4);
+        rf.setPower(-0.4);
+        rr.setPower(-0.4);
 
-        sleep(2500); // drive for 4 seconds
+        sleep(1500); // drive for 4 seconds
 
         // ===== STOP =====
         lf.setPower(0);
