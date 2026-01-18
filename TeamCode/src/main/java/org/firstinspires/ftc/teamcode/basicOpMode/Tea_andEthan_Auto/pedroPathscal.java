@@ -38,6 +38,8 @@ public class pedroPathscal extends OpMode {
         Intake1,
         InOutTake1,
         Intake2,
+        teleLineUp,
+
 
     }
     PathState pathState;
@@ -46,6 +48,7 @@ public class pedroPathscal extends OpMode {
     public PathChain intake1in;
     public PathChain intake1out;
     public PathChain intake2in;
+    public PathChain teleLineUp;
 
     private PathChain driveStart;
     public void buildPaths(){
@@ -78,6 +81,17 @@ public class pedroPathscal extends OpMode {
                                 new Pose(56.318, 66.189),
                                 new Pose(41.098, 59.037),
                                 new Pose(15.652, 59.643)
+                        )
+                ).setTangentHeadingInterpolation()
+
+                .build();
+        teleLineUp = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(15.652, 59.643),
+                                new Pose(18.605, 44.524),
+                                new Pose(71.244, 62.307),
+                                new Pose(75.624, 72.027),
+                                new Pose(46.011, 97.098)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -134,8 +148,11 @@ public class pedroPathscal extends OpMode {
                 intake.setPower(1);
                 follower.followPath(intake2in);
                 intake.setPower(0);
+                setPathState(PathState.teleLineUp);
                 break;
-
+            case teleLineUp:
+                follower.followPath(teleLineUp);
+                break;
             default:
                 telemetry.addLine("No Command :(");
                 break;
