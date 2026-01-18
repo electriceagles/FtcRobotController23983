@@ -32,9 +32,11 @@ public class TentativeAuton extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        // drive ahead 15 inch
-        while (opModeIsActive() && odo.getPosY(DistanceUnit.INCH) < 10) {
+        // drive ahead 10 inch
+        while (opModeIsActive()) {
             odo.update();
+
+            if (odo.getPosX(DistanceUnit.INCH) >= 10) break;
 
             lf.setPower(0.4);
             lr.setPower(0.4);
@@ -46,9 +48,10 @@ public class TentativeAuton extends LinearOpMode {
         sleep(1700);
 
         // back to base
-        while (opModeIsActive() && odo.getPosY(DistanceUnit.INCH) > 0) {
-
+        while (opModeIsActive()) {
             odo.update();
+
+            if (odo.getPosX(DistanceUnit.INCH) <= 0) break;
 
             lf.setPower(-0.4);
             lr.setPower(-0.4);
