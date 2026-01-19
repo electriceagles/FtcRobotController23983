@@ -16,13 +16,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
-    public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(10);
+    public static FollowerConstants followerConstants = new FollowerConstants();
     /*ToDO Tuning
+            .mass();
             .forwardZeroPowerAcceleration();
             .lateralZeroPowerAcceleration();
-            .translationalPIDFCoefficients(new PIDFCoefficients(0,0,0,0))
-            .drivePIDFCoefficients(new PIDFCoefficients(0,0,0,0));
+            .translationalPIDFCoefficients(new PIDFCoefficients(,,,))
+            .drivePIDFCoefficients(new PIDFCoefficients(,,,));
             */
 
     public static MecanumConstants driveConstants = new MecanumConstants()
