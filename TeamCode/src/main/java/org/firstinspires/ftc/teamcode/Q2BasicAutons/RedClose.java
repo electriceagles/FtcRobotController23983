@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.basicOpMode;
+package org.firstinspires.ftc.teamcode.Q2BasicAutons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Leave + Strafe Left (Blue)", group = "Autonomous")
-public class BlueClose extends LinearOpMode {
+@Autonomous(name = "Leave + Strafe Right (Red)", group = "Autonomous")
+public class RedClose extends LinearOpMode {
 
     DcMotorEx lf, lr, rf, rr;
 
@@ -35,14 +35,14 @@ public class BlueClose extends LinearOpMode {
 
         sleep(2500); // adjust if needed
 
-        // ===== STRAFE LEFT =====
-        // Mecanum strafe left:
-        lf.setPower(0.4);
-        lr.setPower(-0.4);
-        rf.setPower(-0.4);
-        rr.setPower(0.4);
+        // ===== STRAFE RIGHT =====
+        // Standard mecanum strafe right
+        lf.setPower(-0.4);
+        lr.setPower(0.4);
+        rf.setPower(0.4);
+        rr.setPower(-0.4);
 
-        sleep(200); // 0.2 seconds
+        sleep(2500); // 0.2 seconds
 
         // ===== STOP =====
         lf.setPower(0);
