@@ -1,19 +1,19 @@
-package org.firstinspires.ftc.teamcode.basicOpMode;
+package org.firstinspires.ftc.teamcode.Q2BasicAutons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Leave + Strafe Left (Blue)", group = "Autonomous")
-public class BlueClose extends LinearOpMode {
+@Autonomous(name = "Leave and Return (v2)", group = "Autonomous")
+public class TimedAuton extends LinearOpMode {
 
     DcMotorEx lf, lr, rf, rr;
 
     @Override
     public void runOpMode() {
 
-        // Drive motors
+        // ---- Drive motors ----
         lf = hardwareMap.get(DcMotorEx.class, "lf");
         lr = hardwareMap.get(DcMotorEx.class, "lr");
         rf = hardwareMap.get(DcMotorEx.class, "rf");
@@ -27,24 +27,29 @@ public class BlueClose extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        // ===== DRIVE BACKWARD =====
+        // ================= DRIVE FORWARD =================
         lf.setPower(0.4);
         lr.setPower(0.4);
         rf.setPower(0.4);
         rr.setPower(0.4);
 
-        sleep(2500); // adjust if needed
+        sleep(1100); // drive forward for 3 seconds
 
-        // ===== STRAFE LEFT =====
-        // Mecanum strafe left:
-        lf.setPower(0.4);
+        stopDrive();
+        sleep(500);
+
+        // ================= DRIVE BACK =================
+        lf.setPower(-0.4);
         lr.setPower(-0.4);
         rf.setPower(-0.4);
-        rr.setPower(0.4);
+        rr.setPower(-0.4);
 
-        sleep(200); // 0.2 seconds
+        sleep(670); // drive backward for 3 seconds
 
-        // ===== STOP =====
+        stopDrive();
+    }
+
+    void stopDrive() {
         lf.setPower(0);
         lr.setPower(0);
         rf.setPower(0);

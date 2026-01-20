@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.basicOpMode.Q2Tele;
+package org.firstinspires.ftc.teamcode.Q2Tele;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "Q2 TeleOp (v2)", group = "TeleOp")
-public class TeleV2 extends LinearOpMode {
+@TeleOp(name = "Q2 TeleOp (v1)", group = "TeleOp")
+public class TeleV1 extends LinearOpMode {
 
     // Drive motors
     public DcMotorEx lf, lr, rf, rr;
@@ -70,7 +70,7 @@ public class TeleV2 extends LinearOpMode {
             if (gamepad1.triangle) {
                 power = 0.42;
             } else if (gamepad1.square) {
-                power = 0.585;
+                power = 0.6;
             } else if (gamepad1.cross) {
                 power = 0.7;
             } else if (gamepad1.right_bumper) {
