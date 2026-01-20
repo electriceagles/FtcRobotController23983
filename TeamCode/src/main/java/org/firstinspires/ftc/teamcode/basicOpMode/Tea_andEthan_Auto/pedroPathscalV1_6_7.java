@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.basicOpMode.Tea_andEthan_Auto;
 
+import static android.os.SystemClock.sleep;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -9,12 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 
+import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.basicOpMode.FlywheelLogic;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -34,11 +33,16 @@ public class pedroPathscalV1_6_7 extends OpMode {
     public enum PathState{
         Drive_Start2Shoot,
         ShootPreload,
-        ShootPreload2,
+        Shoot2,
+        Shoot3,
+        Shoot4,
         Intake1,
         InOutTake1,
         Intake2,
-        teleLineUp,
+        Clear,
+        InOuttake2,
+        Intake3,
+        InOutTake3,
 
 
     }
@@ -48,8 +52,11 @@ public class pedroPathscalV1_6_7 extends OpMode {
     public PathChain intake1in;
     public PathChain intake1out;
     public PathChain intake2in;
-    public PathChain teleLineUp;
-
+    public PathChain clear;
+    public PathChain intake2out;
+    public PathChain intake3in;
+    public PathChain intake3out;
+    public PathChain outOfZone;
     private PathChain driveStart;
     public void buildPaths(){
         //Starting,Ending
@@ -61,52 +68,96 @@ public class pedroPathscalV1_6_7 extends OpMode {
         intake1in = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(59.295, 84.275),
-                                new Pose(19.771, 84.275)
+
+                                new Pose(14.663, 84.110)
                         )
                 ).setTangentHeadingInterpolation()
+
                 .build();
 
         intake1out = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(19.771, 84.275),
-                                new Pose(52.373, 95.867),
+                        new BezierLine(
+                                new Pose(14.663, 84.110),
+
                                 new Pose(59.295, 84.110)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(129))
                 .setReversed()
                 .build();
+
         intake2in = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(59.295, 84.110),
-                                new Pose(56.318, 66.189),
+                                new Pose(56.318, 66.212),
                                 new Pose(41.098, 59.037),
-                                new Pose(15.652, 59.643)
+                                new Pose(18.947, 59.643)
                         )
                 ).setTangentHeadingInterpolation()
 
                 .build();
-        teleLineUp = follower.pathBuilder().addPath(
+
+        clear = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(18.947, 59.643),
+
+                                new Pose(16.320, 71.059)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        intake2out = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(16.320, 71.059),
+
+                                new Pose(59.295, 84.110)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(129))
+                .setReversed()
+                .build();
+
+        intake3in = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(15.652, 59.643),
-                                new Pose(18.605, 44.524),
-                                new Pose(71.244, 62.307),
-                                new Pose(75.624, 72.027),
-                                new Pose(46.011, 97.098)
+                                new Pose(59.295, 84.110),
+                                new Pose(46.466, 30.951),
+                                new Pose(12.968, 35.389)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
+
+        intake3out = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(12.968, 35.389),
+
+                                new Pose(59.295, 84.110)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(129))
+
+                .build();
+
+        outOfZone = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(59.295, 84.110),
+
+                                new Pose(44.565, 79.682)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(129), Math.toRadians(180))
+
+                .build();
+
     }
     public void statePathUpdate(){
-        switch (pathState){
+        switch (pathState) {
             case Drive_Start2Shoot:
                 follower.followPath(driveStart, true);
-                setPathState(PathState.ShootPreload );
+                setPathState(PathState.ShootPreload);
                 break;
             case ShootPreload:
                 shooter.setTargetRPM(4200);
 
                 if (shooter.atSpeed() && !shotsTriggered) {
+                    intake.setPower(1);
                     hardware.servo.setPosition(0.67);
                     shotsTriggered = true;
                     pathTimer.resetTimer();
@@ -114,48 +165,74 @@ public class pedroPathscalV1_6_7 extends OpMode {
 
                 if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
                     hardware.servo.setPosition(0);
+                    intake.setPower(0);
                     shooter.stop();
                     setPathState(PathState.Intake1);
                 }
                 break;
             case Intake1:
-                    intake.setPower(1);
-                    follower.followPath(intake1in, true);
-                    intake.setPower(0);
-                    setPathState(PathState.InOutTake1);
-                    break;
+                intake.setPower(1);
+                follower.followPath(intake1in, true);
+                intake.setPower(0);
+                setPathState(PathState.InOutTake1);
+                break;
             case InOutTake1:
                 follower.followPath(intake1out, true);
-                setPathState(PathState.ShootPreload2);
+                setPathState(PathState.Shoot2);
                 break;
-           case ShootPreload2:
-               shooter.setTargetRPM(4200);
+            case Shoot2:
+                shooter.setTargetRPM(4200);
 
-               if (shooter.atSpeed() && !shotsTriggered) {
-                   hardware.servo.setPosition(0.67);
-                   shotsTriggered = true;
-                   pathTimer.resetTimer();
-               }
+                if (shooter.atSpeed() && !shotsTriggered) {
+                    intake.setPower(1);
+                    hardware.servo.setPosition(0.67);
+                    shotsTriggered = true;
+                    pathTimer.resetTimer();
+                }
 
-               if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                   hardware.servo.setPosition(0);
-                   shooter.stop();
-                   setPathState(PathState.Intake2);
-               }
-               break;
+                if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                    hardware.servo.setPosition(0);
+                    intake.setPower(0);
+                    shooter.stop();
+                    setPathState(PathState.Intake2);
+                }
+                break;
 
             case Intake2:
                 intake.setPower(1);
                 follower.followPath(intake2in);
                 intake.setPower(0);
-                setPathState(PathState.teleLineUp);
+                setPathState(PathState.Clear);
                 break;
-            case teleLineUp:
-                follower.followPath(teleLineUp);
+            case Clear:
+                follower.followPath(clear);
+                sleep(1000);
+                setPathState(PathState.InOuttake2);
                 break;
-            default:
-                telemetry.addLine("No Command :(");
+            case InOuttake2:
+                follower.followPath(intake2out);
+                setPathState(PathState.Shoot3);
                 break;
+            case Shoot3:
+                shooter.setTargetRPM(4200);
+
+                if (shooter.atSpeed() && !shotsTriggered) {
+                    intake.setPower(1);
+                    hardware.servo.setPosition(0.67);
+                    shotsTriggered = true;
+                    pathTimer.resetTimer();
+                }
+
+                if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                    hardware.servo.setPosition(0);
+                    intake.setPower(0);
+                    shooter.stop();
+                    setPathState(PathState.Intake3);
+                }
+                break;
+            case Intake3:
+                intake.setPower(1);
+                follower.followPath(intake3in);
         }
     }
     public void setPathState(PathState newState){
