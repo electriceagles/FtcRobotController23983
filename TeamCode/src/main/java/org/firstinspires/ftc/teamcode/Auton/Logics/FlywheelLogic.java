@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.basicOpMode;
+package org.firstinspires.ftc.teamcode.Auton.Logics;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;

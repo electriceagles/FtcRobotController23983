@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.basicOpMode.Tea_andEthan_Auto;
+package org.firstinspires.ftc.teamcode.Auton;
 
 import static android.os.SystemClock.sleep;
 
@@ -13,13 +13,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.Auton.Logics.FlywheelLogic;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.basicOpMode.FlywheelLogic;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Disabled
 @TeleOp
-public class pedroPathscalV1_6_7 extends OpMode {
+public class pedroPathscalV1 extends OpMode {
 
 
     public DcMotorEx intake;
@@ -43,6 +43,7 @@ public class pedroPathscalV1_6_7 extends OpMode {
         InOuttake2,
         Intake3,
         InOutTake3,
+        Out,
 
 
     }
@@ -233,6 +234,33 @@ public class pedroPathscalV1_6_7 extends OpMode {
             case Intake3:
                 intake.setPower(1);
                 follower.followPath(intake3in);
+                intake.setPower(0);
+                setPathState(PathState.InOutTake3);
+                break;
+            case InOutTake3:
+                follower.followPath(intake3out);
+                setPathState(PathState.Shoot4);
+                break;
+            case Shoot4:
+                shooter.setTargetRPM(4200);
+
+                if (shooter.atSpeed() && !shotsTriggered) {
+                    intake.setPower(1);
+                    hardware.servo.setPosition(0.67);
+                    shotsTriggered = true;
+                    pathTimer.resetTimer();
+                }
+
+                if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                    hardware.servo.setPosition(0);
+                    intake.setPower(0);
+                    shooter.stop();
+                    setPathState(PathState.Out);
+                }
+                break;
+            case Out:
+                follower.followPath(outOfZone);
+                break;
         }
     }
     public void setPathState(PathState newState){

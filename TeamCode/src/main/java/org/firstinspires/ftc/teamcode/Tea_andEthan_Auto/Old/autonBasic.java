@@ -1,14 +1,15 @@
-package org.firstinspires.ftc.teamcode.basicOpMode.Tea_andEthan_Auto;
+package org.firstinspires.ftc.teamcode.Tea_andEthan_Auto.Old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 import android.util.Size;
+
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -21,42 +22,27 @@ import java.util.List;
 Record a video of the test and remove the @Disabled and remember to push code back to the control hub
  */
 @Autonomous
-public class EncoderAutoRed extends LinearOpMode {
+@Disabled
+public class autonBasic extends LinearOpMode {
 
     public RobotHardware hardware = new RobotHardware();
 
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
-
     public DcMotorEx turret;
 
-    public static final int TARGET_TAG_ID = 24; //  24 for red
-    public static final double SCAN_POWER = 0.65;
+    public static final int TARGET_TAG_ID = 20; // right now for blue alliance only; 24 for red
+    public static final double SCAN_POWER = 0.30;
     public static final double SCAN_FREQ  = 0.25;
 
     public static final double TURRET_KP = 0.02;          // power per degree of yaw (start small)
     public static final double MAX_TURRET_POWER = 0.35;
     public static final double YAW_TOL_DEG = 2.0;
-    public static final double TICKS_PER_REV_D = 383.6;
+    public static final double TICKS_PER_REV = 383.6;
     public static final double WHEEL_DIAMETER = 4.09;  // Inches
-    public static final double TICKS_PER_INCH = TICKS_PER_REV_D / (Math.PI * WHEEL_DIAMETER);
+    public static final double TICKS_PER_INCH = TICKS_PER_REV / (Math.PI * WHEEL_DIAMETER);
 
-    public static final double TRACK_WIDTH = 11.79; // Inches
-    public double scanStartTime;
-    public double lastSeenTagTime;
-    public double s_targetRPM = 4200; // tune later
-
-    public double kP = 0.0005;
-    public double kI = 0.0;
-    public double kD = 0.00012;
-
-    private double shooterIntegral = 0;
-    private double shooterLastError = 0;
-
-    private int lastShooterTicks = 0;
-    private double lastShooterTime = 0;
-
-    private static final double TICKS_PER_REV = 28.0;
+    public static final double TRACK_WIDTH = 12; // Inches
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -78,37 +64,10 @@ public class EncoderAutoRed extends LinearOpMode {
 
         waitForStart();
 
-        scanStartTime = getRuntime();
-        lastSeenTagTime = getRuntime();
-
-        lastShooterTime = getRuntime();
-        lastShooterTicks = hardware.shooterFlyWheel1.getCurrentPosition();
-
 
         if (opModeIsActive()) {
-
-            // This is a test if this works we can have this as a backup auto in case you don't have enough time to tune.
-            boolean seen = scanTurretUntilTagSeen(2.5);
-            telemetry.addData("Scan result", seen ? "FOUND" : "NOT FOUND");
-            boolean centered = trackTurretToCenter(1.5);
-            telemetry.addData("Center result", centered ? "CENTERED" : "NOT CENTERED");
-            telemetry.update();
-
-            if (centered) {
-                driveInches(72, 0.25);
-                turn(90, 0.5);
-                rev();
-                intake();
-                rev();
-                strafeInches("right", 24,0.5);
-                intake();
-                strafeInches("left",24,0.5);
-                rev();
-                hardware.turret.setPower(0);
-                if (visionPortal != null) visionPortal.close();
-            }
+            drive(500, 0.67);
         }
-
     }
     private AprilTagDetection getTargetTag() {
         if (aprilTag == null) return null;
@@ -128,10 +87,8 @@ public class EncoderAutoRed extends LinearOpMode {
         while (opModeIsActive() && (getRuntime() - start) < timeoutSeconds) {
             AprilTagDetection target = getTargetTag();
 
-            telemetry.addData("Tag Found?", target != null);
             if (target != null) {
-                telemetry.addData("Tag ID", target.id);
-                telemetry.update();
+                telemetry.addData("Tag Found?", true);
                 hardware.turret.setPower(0);
                 return true; // found it
             }
@@ -151,6 +108,7 @@ public class EncoderAutoRed extends LinearOpMode {
         telemetry.addData("Tag Found?", false);
         telemetry.addData("Result", "Timed out");
         telemetry.update();
+
         return false; // timed out
     }
     public boolean trackTurretToCenter(double timeoutSeconds) {
@@ -182,10 +140,10 @@ public class EncoderAutoRed extends LinearOpMode {
         return false;
     }
     public void intake() {
-        hardware.intake.setPower(0.67);
+        hardware.intake.setPower(1);
         driveInches(36, 0.5);
+        sleep(5000);
         hardware.intake.setPower(0);
-        sleep(500);
         driveInches(36, -0.5);
     }
     public void driveInches(double inches, double power) {
@@ -209,26 +167,13 @@ public class EncoderAutoRed extends LinearOpMode {
     }
 
     public void rev(){
+        hardware.resetEnc();
 
-        double currentRPM = getShooterRPM();
-        double pidPower = shooterPID(currentRPM);
-
-        hardware.shooterFlyWheel1.setPower(pidPower);
-        hardware.shooterFlyWheel2.setPower(pidPower);
-        sleep(500);
-        hardware.servo.setPosition(0.67);
-
-        sleep((3500));
-        hardware.servo.setPosition(0);
-
+        hardware.shooterFlyWheel1.setPower(0.7);
+        hardware.shooterFlyWheel2.setPower(0.7);
+        sleep((4100));
         hardware.shooterFlyWheel1.setPower(0);
         hardware.shooterFlyWheel2.setPower(0);
-
-        shooterIntegral = 0;
-        shooterLastError = 0;
-
-        lastShooterTime = getRuntime();
-        lastShooterTicks = hardware.shooterFlyWheel1.getCurrentPosition();
         sleep(500);
     }
 
@@ -307,33 +252,5 @@ public class EncoderAutoRed extends LinearOpMode {
             hardware.leftRear.setPower(-power);
 
         }
-    }
-    private double getShooterRPM() {
-        int currentTicks = hardware.shooterFlyWheel1.getCurrentPosition();
-        double currentTime = getRuntime();
-
-        double deltaTicks = currentTicks - lastShooterTicks;
-        double deltaTime  = currentTime - lastShooterTime;
-
-        if (deltaTime <= 0) return 0;
-
-        double revolutions = deltaTicks / TICKS_PER_REV;
-        double rpm = (revolutions / deltaTime) * 60.0;
-
-        lastShooterTicks = currentTicks;
-        lastShooterTime = currentTime;
-
-        return Math.abs(rpm);
-    }
-
-    private double shooterPID(double currentRPM) {
-        double error = s_targetRPM - currentRPM;
-
-        shooterIntegral += error;
-        double derivative = error - shooterLastError;
-        shooterLastError = error;
-
-        double output = (kP * error) + (kI * shooterIntegral) + (kD * derivative);
-        return Math.max(0.0, Math.min(1.0, output));
     }
 }
