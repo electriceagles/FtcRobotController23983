@@ -14,13 +14,12 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Auton.Logics.FlywheelLogic;
-import org.firstinspires.ftc.teamcode.Auton.Logics.TurretLogic;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Disabled
 @TeleOp
-public class pedroPathscalV1L extends OpMode {
+public class pedroPathscalBlueV1 extends OpMode {
 
 
     public DcMotorEx intake;
@@ -29,7 +28,7 @@ public class pedroPathscalV1L extends OpMode {
     //FLYWHEEL LOGIC SETUP
     private FlywheelLogic shooter = new FlywheelLogic();
     private boolean shotsTriggered = false;
-    public RobotHardware hardware;
+    private RobotHardware hardware;
 
     public enum PathState{
         Drive_Start2Shoot,
@@ -49,7 +48,8 @@ public class pedroPathscalV1L extends OpMode {
 
     }
     PathState pathState;
-    public PathChain start;
+    private final Pose startPose = new Pose(59.29519450800915,7,Math.toRadians(90));
+    private final Pose shootPose = new Pose(59.29519450800915,84.27459954233409,Math.toRadians(129));
     public PathChain intake1in;
     public PathChain intake1out;
     public PathChain intake2in;
@@ -58,15 +58,12 @@ public class pedroPathscalV1L extends OpMode {
     public PathChain intake3in;
     public PathChain intake3out;
     public PathChain outOfZone;
+    private PathChain driveStart;
     public void buildPaths(){
-        start = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(59.295, 7.000),
-
-                                new Pose(59.295, 84.275)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
-
+        //Starting,Ending
+        driveStart = follower.pathBuilder()
+                .addPath(new BezierLine(startPose,shootPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading())
                 .build();
 
         intake1in = follower.pathBuilder().addPath(
@@ -85,15 +82,15 @@ public class pedroPathscalV1L extends OpMode {
 
                                 new Pose(59.295, 84.110)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(129))
                 .setReversed()
                 .build();
 
         intake2in = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(59.295, 84.110),
-                                new Pose(48.410, 60.798),
-                                new Pose(32.860, 59.060),
+                                new Pose(56.318, 66.212),
+                                new Pose(41.098, 59.037),
                                 new Pose(18.947, 59.643)
                         )
                 ).setTangentHeadingInterpolation()
@@ -104,7 +101,7 @@ public class pedroPathscalV1L extends OpMode {
                         new BezierLine(
                                 new Pose(18.947, 59.643),
 
-                                new Pose(15.002, 72.378)
+                                new Pose(16.320, 71.059)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -112,18 +109,18 @@ public class pedroPathscalV1L extends OpMode {
 
         intake2out = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.002, 72.378),
+                                new Pose(16.320, 71.059),
 
                                 new Pose(59.295, 84.110)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(129))
                 .setReversed()
                 .build();
 
         intake3in = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(59.295, 84.110),
-                                new Pose(46.460, 30.957),
+                                new Pose(46.466, 30.951),
                                 new Pose(12.968, 35.389)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
@@ -136,7 +133,7 @@ public class pedroPathscalV1L extends OpMode {
 
                                 new Pose(59.295, 84.110)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(129))
 
                 .build();
 
@@ -146,7 +143,7 @@ public class pedroPathscalV1L extends OpMode {
 
                                 new Pose(44.565, 79.682)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(129), Math.toRadians(180))
 
                 .build();
 
@@ -154,7 +151,7 @@ public class pedroPathscalV1L extends OpMode {
     public void statePathUpdate(){
         switch (pathState) {
             case Drive_Start2Shoot:
-                follower.followPath(start, true);
+                follower.followPath(driveStart, true);
                 setPathState(PathState.ShootPreload);
                 break;
             case ShootPreload:

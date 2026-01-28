@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Disabled
 @TeleOp
-public class pedroPathscalV1 extends OpMode {
+public class pedroPathscalRedV1 extends OpMode {
 
 
     public DcMotorEx intake;
@@ -152,7 +152,7 @@ public class pedroPathscalV1 extends OpMode {
         switch (pathState) {
             case Drive_Start2Shoot:
                 follower.followPath(start, true);
-                setPathState(pedroPathscalV1.PathState.ShootPreload);
+                setPathState(pedroPathscalRedV1.PathState.ShootPreload);
                 break;
             case ShootPreload:
                 shooter.setTargetRPM(4200);
@@ -168,18 +168,18 @@ public class pedroPathscalV1 extends OpMode {
                     hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
-                    setPathState(pedroPathscalV1.PathState.Intake1);
+                    setPathState(pedroPathscalRedV1.PathState.Intake1);
                 }
                 break;
             case Intake1:
                 intake.setPower(1);
                 follower.followPath(intake1in, true);
                 intake.setPower(0);
-                setPathState(pedroPathscalV1.PathState.InOutTake1);
+                setPathState(pedroPathscalRedV1.PathState.InOutTake1);
                 break;
             case InOutTake1:
                 follower.followPath(intake1out, true);
-                setPathState(pedroPathscalV1.PathState.Shoot2);
+                setPathState(pedroPathscalRedV1.PathState.Shoot2);
                 break;
             case Shoot2:
                 shooter.setTargetRPM(4200);
@@ -195,7 +195,7 @@ public class pedroPathscalV1 extends OpMode {
                     hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
-                    setPathState(pedroPathscalV1.PathState.Intake2);
+                    setPathState(pedroPathscalRedV1.PathState.Intake2);
                 }
                 break;
 
@@ -203,16 +203,16 @@ public class pedroPathscalV1 extends OpMode {
                 intake.setPower(1);
                 follower.followPath(intake2in);
                 intake.setPower(0);
-                setPathState(pedroPathscalV1.PathState.Clear);
+                setPathState(pedroPathscalRedV1.PathState.Clear);
                 break;
             case Clear:
                 follower.followPath(clear);
                 sleep(1000);
-                setPathState(pedroPathscalV1.PathState.InOuttake2);
+                setPathState(pedroPathscalRedV1.PathState.InOuttake2);
                 break;
             case InOuttake2:
                 follower.followPath(intake2out);
-                setPathState(pedroPathscalV1.PathState.Shoot3);
+                setPathState(pedroPathscalRedV1.PathState.Shoot3);
                 break;
             case Shoot3:
                 shooter.setTargetRPM(4200);
@@ -228,18 +228,18 @@ public class pedroPathscalV1 extends OpMode {
                     hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
-                    setPathState(pedroPathscalV1.PathState.Intake3);
+                    setPathState(pedroPathscalRedV1.PathState.Intake3);
                 }
                 break;
             case Intake3:
                 intake.setPower(1);
                 follower.followPath(intake3in);
                 intake.setPower(0);
-                setPathState(pedroPathscalV1.PathState.InOutTake3);
+                setPathState(pedroPathscalRedV1.PathState.InOutTake3);
                 break;
             case InOutTake3:
                 follower.followPath(intake3out);
-                setPathState(pedroPathscalV1.PathState.Shoot4);
+                setPathState(pedroPathscalRedV1.PathState.Shoot4);
                 break;
             case Shoot4:
                 shooter.setTargetRPM(4200);
@@ -255,7 +255,7 @@ public class pedroPathscalV1 extends OpMode {
                     hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
-                    setPathState(pedroPathscalV1.PathState.Out);
+                    setPathState(pedroPathscalRedV1.PathState.Out);
                 }
                 break;
             case Out:
@@ -263,7 +263,7 @@ public class pedroPathscalV1 extends OpMode {
                 break;
         }
     }
-    public void setPathState(pedroPathscalV1.PathState newState){
+    public void setPathState(pedroPathscalRedV1.PathState newState){
         pathState = newState;
         pathTimer.resetTimer();
 
@@ -271,7 +271,7 @@ public class pedroPathscalV1 extends OpMode {
     }
     @Override
     public void init(){
-        pathState = pedroPathscalV1.PathState.Drive_Start2Shoot;
+        pathState = pedroPathscalRedV1.PathState.Drive_Start2Shoot;
         pathTimer = new Timer();
         opModeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
