@@ -89,7 +89,7 @@ public class BasicBlue extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         shooter.init(hardwareMap);
     }
-    public void setPathState(PathState newState){
+    private void setPathState(PathState newState){
         pathState = newState;
         pathTimer.resetTimer();
 
