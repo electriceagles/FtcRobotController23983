@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Auton.Logics.FlywheelLogic;
 import org.firstinspires.ftc.teamcode.Auton.Logics.TurretLogic;
-import org.firstinspires.ftc.teamcode.Auton.Logics.LimeDistance;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
