@@ -12,7 +12,7 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Auton.Logics.FlywheelLogic;
-import org.firstinspires.ftc.teamcode.Auton.Logics.TurretLogic;
+import org.firstinspires.ftc.teamcode.Auton.Logics.TurretLogicR;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -26,7 +26,7 @@ public class pedroPathscalRedV1L extends OpMode {
     private Timer pathTimer, opModeTimer;
     //LOGIC SETUPS
     private final FlywheelLogic shooter = new FlywheelLogic();
-    private final TurretLogic turretControl = new TurretLogic();
+    private final TurretLogicR turretControl = new TurretLogicR();
     public RobotHardware hardware;
 
     public enum PathState{
