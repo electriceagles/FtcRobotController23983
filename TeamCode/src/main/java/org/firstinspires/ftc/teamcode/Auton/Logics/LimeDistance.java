@@ -29,8 +29,8 @@ public class LimeDistance {
 
     public void init() {
         limelight = hardwareMap.get(Limelight3A.class, "Limelight");
-        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.start(); // This tells Limelight to start looking!
+        limelight.setPollRateHz(100);
+        limelight.start();
     }
 
 
