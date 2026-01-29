@@ -29,6 +29,7 @@ public class RobotHardware {
     public DcMotorEx shooterFlyWheel1;
     public DcMotorEx shooterFlyWheel2;
     public Servo servo;
+    public Servo hood;
     public DcMotorEx turret;
 
     public VisionPortal visionPortal;
@@ -64,6 +65,8 @@ public class RobotHardware {
         intake = hardwareMap.get(DcMotorEx.class, "i");
         shooterFlyWheel1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooterFlyWheel2 = hardwareMap.get(DcMotorEx.class, "sf2");
+
+        hood = hardwareMap.get(Servo.class, "hood");
         servo = hardwareMap.get(Servo.class, "servo");
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
