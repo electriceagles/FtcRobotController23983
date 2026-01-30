@@ -11,9 +11,9 @@ public class LimeDistance {
 
     public Servo servo;
     // Constants
-    double limelightMountAngleDegrees = 25.0; // Example
-    double limelightLensHeightInches = 20.0;
-    double goalHeightInches = 60.0;
+    double limelightMountAngleDegrees = 0; // Example
+    double limelightLensHeightInches = 13.4535433;
+    double goalHeightInches = 29.67;
     public Double distance;
 
     public void update(){
@@ -23,7 +23,7 @@ public class LimeDistance {
 
     // Calculate distance
     double angleToGoalDegrees = limelightMountAngleDegrees + ty;
-    double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
+    double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
     distance = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
 }
 
