@@ -10,9 +10,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @TeleOp
 public class FlyWheelPIDFtuning extends OpMode {
 
-    public DcMotorEx shooter1;
-    public DcMotorEx shooter2;
-
     public double lowVelocity = 3000;
     public double medVelocity = 4000;
     public double interVelocity = 5000;
@@ -22,6 +19,11 @@ public class FlyWheelPIDFtuning extends OpMode {
 
     double P = 0;
     double F = 0;
+
+
+    public DcMotorEx shooter1;
+    public DcMotorEx shooter2;
+
 
     double[] stepSizes = {10.0, 1.0, 0.1, 0.001, 0.001};
     int stepIndex = 1;
@@ -60,7 +62,7 @@ public class FlyWheelPIDFtuning extends OpMode {
          curTargetVelocity = interVelocity;
      } else if (gamepad1.crossWasPressed()) {
          curTargetVelocity = highVelocity;
-     } else {
+     } else if (gamepad1.leftBumperWasPressed()){
          curTargetVelocity = 0;
      }
 
@@ -90,6 +92,9 @@ public class FlyWheelPIDFtuning extends OpMode {
 
      shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
      shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+     shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+     shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
      //set new velocity
 
