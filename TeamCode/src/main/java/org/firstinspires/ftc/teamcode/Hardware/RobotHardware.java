@@ -31,11 +31,13 @@ public class RobotHardware {
     public AprilTagProcessor aprilTag;
 
     public SampleMecanumDrive drive;
+    public TurretSubsystem turretSubsystem;
 
     public void init(HardwareMap hardwareMap, boolean isAuto) {
 
         if (isAuto) {
             drive = new SampleMecanumDrive(hardwareMap);
+            turretSubsystem = new TurretSubsystem();
         }
 
         // DRIVETRAIN
