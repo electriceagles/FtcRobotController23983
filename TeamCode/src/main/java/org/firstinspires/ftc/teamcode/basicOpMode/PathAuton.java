@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.examples;
+// package org.firstinspires.ftc.teamcode.examples;
 
-
+/**
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -122,4 +122,4 @@ public class PathAuton extends OpMode {
     public void stop() {
         PathServer.stopServer();
     }
-}
+} **/
