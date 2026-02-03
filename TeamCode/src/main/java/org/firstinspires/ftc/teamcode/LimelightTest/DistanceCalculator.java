@@ -1,20 +1,28 @@
 package org.firstinspires.ftc.teamcode.LimelightTest;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name="AprilTag Localization Shooter", group="Vision")
-public class DistanceShooter extends LinearOpMode{
+public class DistanceCalculator extends LinearOpMode{
     public Limelight3A limelight;
     public double tx = 0;
     public double ty = 0;
 
     public DcMotorEx shooter1;
     public DcMotorEx shooter2;
+
+    // degree of limelight mount
+    public double mountAng = 6.7;
+
+    //height relative to ground
+    public double llheighIn = 20.0;
+
+    //height of goal
+    public double goalHeightInches = 60.0;
 
 
 
@@ -41,23 +49,14 @@ public class DistanceShooter extends LinearOpMode{
                 telemetry.addData("AprilTag:", "No Targets");
             }
 
-            double targetOffsetAngle_Vertical = ty;
+            double targetdeltaY = ty;
 
 
-            // how many degrees back is your limelight rotated from perfectly vertical?
-            double limelightMountAngleDegrees = 25.0;
+            double angleToGoalDegrees = mountAng + targetdeltaY;
+            double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
 
-            // distance from the center of the Limelight lens to the floor
-            double limelightLensHeightInches = 20.0;
-
-            // distance from the target to the floor
-            double goalHeightInches = 60.0;
-
-            double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-            double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-
-            //calculate distance
-            double distanceLL2G = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+            //calculate distance and use to regulate stuff
+            double distanceLL2G = (goalHeightInches - llheighIn) / Math.tan(angleToGoalRadians);
         }
 
 
