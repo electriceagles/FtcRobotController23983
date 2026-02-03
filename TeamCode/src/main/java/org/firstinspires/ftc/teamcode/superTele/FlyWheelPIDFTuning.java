@@ -155,6 +155,6 @@ public class FlyWheelPIDFTuning extends OpMode {
         telemetry.addLine("..........................................");
         telemetry.addLine("------------------------------------------");
         telemetry.addData("Tuning P", "%.4f (D-Pad U/D)", P);
-        telemetry.addData("Tuning F", "%.4f (D-Pad L/F)", P);
+        telemetry.addData("Tuning F", "%.4f (D-Pad L/F)", F);
     }
 }
