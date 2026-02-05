@@ -108,13 +108,8 @@ public class teleopPIDV1 extends OpMode {
 
 
         //set new velocity
-        if (gamepad1.right_bumper){
-            shooter1.setVelocity(curTargetVelocity);
-            shooter2.setVelocity(curTargetVelocity);
-        } else if (gamepad1.left_bumper) {
-            shooter1.setVelocity(0);
-            shooter2.setVelocity(0);
-        }
+        shooter1.setVelocity(curTargetVelocity);
+        shooter2.setVelocity(curTargetVelocity);
 
 
         //telemetry stuff
