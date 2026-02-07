@@ -48,9 +48,9 @@ public class SampleCode extends LinearOpMode {
             }
 
             if (tx > 5) { //basically driver needs to align/turn robot until the tag is at least within 5 degrees of view
-                turret.setPower(0.4); //might need to change based on how fast limelight processing is
+                turret.setPower(-0.6); //might need to change based on how fast limelight processing is
             } else if (tx < -5) {
-                turret.setPower(-0.4);
+                turret.setPower(0.6);
             } else {
                 turret.setPower(0);
             }
