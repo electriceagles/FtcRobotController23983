@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.LimelightTest;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Config
 @TeleOp(name="Test Limelight PID")
 public class PIDturret extends OpMode {
 
@@ -16,14 +15,14 @@ public class PIDturret extends OpMode {
 
     private DcMotorEx turret;
 
-    double tx = 0;
-    double ty = 0;
+    public double tx = 0;
+    public double ty = 0;
 
-    double lastError = 0;
-    public static double kP = 0.04;
-    public static double kD = 0.008;
+    public double lastError = 0;
+    public double kP = 0.04;
+    public double kD = 0.008;
 
-
+    ElapsedTime timer = new ElapsedTime();
 
     @Override
     public void init() {
@@ -58,14 +57,12 @@ public class PIDturret extends OpMode {
 
             double errorChange = tx - lastError;
 
-            double motorPower = (tx * kP) + (errorChange * kD);
+            double derivative = errorChange / timer.seconds();
 
-            if (motorPower > 1.0) {
-                motorPower = 1.0;
-            }
-            if (motorPower < -1.0) {
-                motorPower = -1.0;
-            }
+            double motorPower = (tx * kP) + (derivative * kD);
+
+            motorPower = Math.max(-0.5, Math.min(0.5, motorPower));
+
 
             if (Math.abs(tx) < 3) {
                 turret.setPower(0);
@@ -74,6 +71,7 @@ public class PIDturret extends OpMode {
             }
 
             lastError = tx;
+            timer.reset();
 
             telemetry.addData("Target X", tx);
             telemetry.addData("power", motorPower);
