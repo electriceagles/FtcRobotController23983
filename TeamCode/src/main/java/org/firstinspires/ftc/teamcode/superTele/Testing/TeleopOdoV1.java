@@ -94,14 +94,14 @@ public class TeleopOdoV1 extends OpMode {
         shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
 
         // pinpoint and odometry
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "imu");
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setOffsets(-84, -168, DistanceUnit.MM); // offset for pods (might have to change)
 
         //field start pose (inches)
-        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 33, 39, AngleUnit.DEGREES, 90));
+        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 56, 8, AngleUnit.DEGREES, 90));
 
-        telemetry.addLine("Starting Pose: 33, 39, 90º");
+        telemetry.addLine("Starting Pose: 56, 8, 90º");
     }
 
     @Override
@@ -148,6 +148,14 @@ public class TeleopOdoV1 extends OpMode {
         shooter1.setVelocity(curTargetVelocity);
         shooter2.setVelocity(curTargetVelocity);
 
+        double curVelocity1 = shooter1.getVelocity();
+
+        double error1 = curVelocity1 - curTargetVelocity;
+
+        if (gamepad1.right_bumper && Math.abs(error1) == 50){
+            gamepad1.rumbleBlips(2);
+        }
+
         //odometry update and data
         pinpoint.update();
 
@@ -162,7 +170,10 @@ public class TeleopOdoV1 extends OpMode {
         double turretTargetAngle = AngleUnit.normalizeRadians(targetDirection - heading);
         int targetTicks = (int)(turretTargetAngle * TICKS_PER_RAD);
 
-        turret.setTargetPosition(targetTicks);
+        if (gamepad1.dpad_up){
+            turret.setTargetPosition(targetTicks);
+        }
+
 
         //switching to vision turret aim (failsafe)
         if (gamepad1.dpad_up) {
