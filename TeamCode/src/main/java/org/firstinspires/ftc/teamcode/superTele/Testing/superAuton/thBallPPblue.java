@@ -34,9 +34,15 @@ public class thBallPPblue extends OpMode {
     private PathChain driveStart2Shoot;
 
     public void buildPaths() {
-        driveStart2Shoot = new PathChain(
-                new Path(new BezierLine(startPose, shootPose))
-        );
+//        driveStart2Shoot = new PathChain(
+//                new Path(new BezierLine(startPose, shootPose))
+//        );
+
+        driveStart2Shoot = follower.pathBuilder()
+                .addPath(new BezierLine(startPose, shootPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
+                .build();
+
     }
 
     @Override
