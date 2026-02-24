@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
 @TeleOp(name = "TeleOP Odo Turret BLUE v1", group = "TeleOp")
 public class TeleopOdoV1 extends OpMode {
 
@@ -178,7 +179,7 @@ public class TeleopOdoV1 extends OpMode {
         double turretTargetAngle = AngleUnit.normalizeRadians(targetDirection - heading);
         int targetTicks = (int)(turretTargetAngle * TICKS_PER_RAD);
 
-        if (gamepad1.dpad_up){
+        if (gamepad1.right_bumper || gamepad1.triangle || gamepad1.square || gamepad1.cross) {
             turret.setTargetPosition(targetTicks);
         }
 
