@@ -22,6 +22,8 @@ public class TeleopOdoV1 extends OpMode {
     DcMotorEx turret;
     DcMotorEx shooter1, shooter2;
 
+    Servo gate;
+
     private Limelight3A limelight;
     public double tx = 0;
     public double ty = 0;
@@ -71,6 +73,7 @@ public class TeleopOdoV1 extends OpMode {
 
         // intake
         intake = hardwareMap.get(DcMotorEx.class, "i");
+        gate = hardwareMap.get(Servo.class, "gate");
 
         // turret
         turret = hardwareMap.get(DcMotorEx.class, "turret");
@@ -123,12 +126,17 @@ public class TeleopOdoV1 extends OpMode {
         rr.setPower((y + x - rx * 0.8) * powerMult);
 
         // intake or transfer
-        if (gamepad1.left_bumper) {
+        if (gamepad1.dpad_up) {
             intake.setPower(1);
+        } else if (gamepad1.left_bumper) {
+            gate.setPosition(23); // tune
+            intake.setPower(-1);
+
         } else if (gamepad1.left_trigger > 0.1) {
             intake.setPower(-1);
         } else {
             intake.setPower(0);
+            gate.setPosition(0); //tune
         }
 
         // shooting velocity selector
@@ -152,7 +160,7 @@ public class TeleopOdoV1 extends OpMode {
 
         double error1 = curVelocity1 - curTargetVelocity;
 
-        if (gamepad1.right_bumper && Math.abs(error1) == 50){
+        if (curTargetVelocity > 0 && Math.abs(error1) == 50){
             gamepad1.rumbleBlips(2);
         }
 
@@ -176,7 +184,7 @@ public class TeleopOdoV1 extends OpMode {
 
 
         //switching to vision turret aim (failsafe)
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpad_left) {
             visionTurret = true;
         } else {
             visionTurret = false;
