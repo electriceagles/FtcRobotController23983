@@ -41,6 +41,18 @@ public class thBallPPblue extends OpMode {
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
                 .build();
     }
+    public void statePathUpdate() {
+        switch (pathState) {
+            case DRIVE_STARTPOS_SHOOT_POS:
+                follower.followPath(driveStart2Shoot, true);
+                pathState = PathState.SHOOT_PRELOAD;
+                break;
+            case SHOOT_PRELOAD:
+                if (!follower.isBusy()){
+                    //add flywhhel logic
+                }
+        }
+    }
 
     @Override
     public void init (){
