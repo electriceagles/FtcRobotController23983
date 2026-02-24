@@ -16,7 +16,6 @@ public class ShooterLogic {
     private DcMotorEx shooter2;
     private DcMotorEx intake;
     private Servo gate;
-    private CRServo backServo;
 
     private ElapsedTime stateTimer = new ElapsedTime();
 
@@ -45,7 +44,6 @@ public class ShooterLogic {
 
     public void init (HardwareMap hwMap) {
         gate = hwMap.get(Servo.class, "gate");
-        backServo = hwMap.get(CRServo.class, "back");
         shooter1 = hwMap.get(DcMotorEx.class, "sf1");
         shooter2 = hwMap.get(DcMotorEx.class, "sf2");
 
@@ -98,7 +96,6 @@ public class ShooterLogic {
             case LAUNCH:
                 if (stateTimer.seconds() > GATE_OPEN_TIME) {
                     intake.setPower(-1);
-                    backServo.setPower(1);
                     shotsRemaining--;
 
                     gate.setPosition(GATE_CLOSE_ANGLE);
@@ -118,7 +115,6 @@ public class ShooterLogic {
                         shooter2.setPower(0);
 
                         intake.setPower(0);
-                        backServo.setPower(0);
 
                         flywheelState = FlywheelState.IDLE;
                     }
