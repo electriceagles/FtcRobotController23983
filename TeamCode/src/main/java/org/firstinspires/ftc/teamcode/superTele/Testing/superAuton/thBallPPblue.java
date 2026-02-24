@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.superTele.Testing.superAuton;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
+@Configurable
 @TeleOp
 public class thBallPPblue extends OpMode {
 
