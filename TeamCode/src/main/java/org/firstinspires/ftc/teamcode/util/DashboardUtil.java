@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.path.Path;
+import com.acmerobotics.roadrunner.geometry.*;
+import com.acmerobotics.roadrunner.path.*;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.purepursuit.Path;
 
 import java.util.List;
 

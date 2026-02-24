@@ -28,21 +28,18 @@ public class thBallPPblue extends OpMode {
 
     PathState pathState;
 
-    private final Pose startPose = new Pose (20.22085889570552, 122.62576687116562, Math.toRadians(144));
+//    private final Pose startPose = new Pose (20.22085889570552, 122.62576687116562, Math.toRadians(144));
     private final Pose shootPose = new Pose(70.23312883435584, 78.40490797546012, Math.toRadians(135));
+
+    private final Pose startPose = new Pose (20.22085889570552, 122.62576687116562, (int) Math.toRadians(144));
 
     private PathChain driveStart2Shoot;
 
     public void buildPaths() {
-//        driveStart2Shoot = new PathChain(
-//                new Path(new BezierLine(startPose, shootPose))
-//        );
-
         driveStart2Shoot = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
                 .build();
-
     }
 
     @Override
