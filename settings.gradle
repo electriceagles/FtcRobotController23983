@@ -1,8 +1,10 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
 include ':FtcRobotController'
 include ':TeamCode'
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
 
     repositories {
         google()
