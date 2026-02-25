@@ -25,6 +25,8 @@ public class TeleopOdoV1 extends OpMode {
 
     Servo gate;
 
+    CRServo gekko;
+
     private Limelight3A limelight;
     public double tx = 0;
     public double ty = 0;
@@ -75,6 +77,7 @@ public class TeleopOdoV1 extends OpMode {
         // intake
         intake = hardwareMap.get(DcMotorEx.class, "i");
         gate = hardwareMap.get(Servo.class, "gate");
+        gekko = hardwareMap.get(CRServo.class, "gekko");
 
         // turret
         turret = hardwareMap.get(DcMotorEx.class, "turret");
@@ -129,15 +132,17 @@ public class TeleopOdoV1 extends OpMode {
         // intake or transfer
         if (gamepad1.dpad_up) {
             intake.setPower(1);
+            gekko.setPower(-1);
         } else if (gamepad1.left_bumper) {
             gate.setPosition(23); // tune
             intake.setPower(-1);
-
         } else if (gamepad1.left_trigger > 0.1) {
             intake.setPower(-1);
+            gekko.setPower(-1);
         } else {
             intake.setPower(0);
             gate.setPosition(0); //tune
+            gekko.setPower(0);
         }
 
         // shooting velocity selector

@@ -16,11 +16,11 @@ public class TurretSubsystem {
     public double dt;
     public long lastTime;
 
-    public double kP = 0.0; // TODO: Tune these
-    public double kD = 0.0;
+    public static double kP = 0.006; // TODO: Tune these
+    public static double kD = 0.00006;
 
-    public double TURRET_GEAR_RATIO = 0; // CALCULATE THIS
-    public double MOTOR_GEAR_RATIO = 0; // CALCULATE THIS
+    public double TURRET_GEAR_RATIO = 4; // CALCULATE THIS
+    public double MOTOR_GEAR_RATIO = 19.2; //TODO: CALCULATE THIS
     public double TICKS_PER_REVOLUTION = 28 * TURRET_GEAR_RATIO * MOTOR_GEAR_RATIO;
 
     public double getAngleInDegrees() {

@@ -1,21 +1,26 @@
-package org.firstinspires.ftc.teamcode.basicOpMode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "test servo", group = "TeleOp")
+@TeleOp(name = "testing servos", group = "TeleOp")
 public class servotest extends LinearOpMode {
-    public Servo servo;
+    public Servo gate;
+    public CRServo gekko;
 
     @Override public void runOpMode() {
-        servo = hardwareMap.get(Servo.class, "servo");
+        gate = hardwareMap.get(Servo.class, "gate");
+        gekko = hardwareMap.get(CRServo.class, "gekko");
 
         //SERVO SYSTEM MUST BE TUNED LATER TO RIGHT POSITIONS
         if (gamepad1.right_trigger > 0.1) {
-            servo.setPosition(0.5); // moves servo 90 degrees
+            gate.setPosition(0.5); // moves servo 90 degrees
+            gekko.setPower(-1);
         } else {
-            servo.setPosition(0); // moves back to og position
+            gate.setPosition(0); // moves back to og position
+            gekko.setPower(0);
         }
     }
 }
