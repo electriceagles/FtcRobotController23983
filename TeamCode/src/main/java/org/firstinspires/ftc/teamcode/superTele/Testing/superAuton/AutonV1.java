@@ -254,6 +254,7 @@ public class AutonV1 extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+        stateTimer.reset();
 
 
         follower = Constants.createFollower(hardwareMap);
