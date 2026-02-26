@@ -40,14 +40,16 @@ public class AutonV1 extends OpMode {
 
     private final Pose startPose = new Pose(56, 8, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(56, 104, Math.toRadians(140)); // Scoring Pose of our robot. It is facing the goal at a 138 degree angle.
+    private final Pose pickup1set = new Pose(40.52117263843648, 83.72638436482086, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(15.244299674267102, 83.72638436482086, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickup2Pose = new Pose(13.8371335504886, 59.57003257328989, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickup2set = new Pose(40.52117263843648, 59.57003257328989, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(15.244299674267102, 59.57003257328989, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
     private final Pose returnPose = new Pose(56, 104, Math.toRadians(90));
 
     private Path scorePreload;
-    private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, homePose;
+    private PathChain Pickup1setup, grabPickup1, scorePickup1, Pickup2setup, grabPickup2, scorePickup2, homePose;
 
-    public void buildPaths() {
+    public void buildPaths() { //edit
         /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
@@ -55,10 +57,15 @@ public class AutonV1 extends OpMode {
     /* Here is an example for Constant Interpolation
     scorePreload.setConstantInterpolation(startPose.getHeading()); */
 
+        Pickup1setup = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, pickup1set))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .build();
+
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup1Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierLine(pickup1set, pickup1Pose))
+                .setLinearHeadingInterpolation(pickup1set.getHeading(), pickup1Pose.getHeading())
                 .build();
 
         /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -67,10 +74,15 @@ public class AutonV1 extends OpMode {
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
                 .build();
 
+        Pickup2setup = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, pickup2set))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2set.getHeading())
+                .build();
+
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup2Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
+                .addPath(new BezierLine(pickup2set, pickup2Pose))
+                .setLinearHeadingInterpolation(pickup2set.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -112,7 +124,6 @@ public class AutonV1 extends OpMode {
                 }
                 break;
 
-
             case 1:
             /* You could check for
             - Follower State: "if(!follower.isBusy()) {}"
@@ -123,18 +134,34 @@ public class AutonV1 extends OpMode {
                 if(!follower.isBusy()) {
                     /* Grab Sample */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(grabPickup1,true);
+                    follower.followPath(Pickup1setup,true);
                     //intake
                     intake.setPower(-1);
-
-                    if(follower.getPose().getX() > 15) {
-                        intake.setPower(0);
                         setPathState(2);
+                }
+                break;
+
+
+            case 2:
+            /* You could check for
+            - Follower State: "if(!follower.isBusy()) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Robot Position: "if(follower.getPose().getX() > 36) {}"
+            */
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(!follower.isBusy()) {
+                    /* Grab Sample */
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    follower.followPath(grabPickup1,true);
+
+                    if(follower.getPose().getX() > 14 && follower.getPose().getY() > 82) {
+                        intake.setPower(0);
+                        setPathState(3);
                     }
                 }
                 break;
 
-            case 2:
+            case 3:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(!follower.isBusy()) {
                    //shoot
@@ -163,24 +190,39 @@ public class AutonV1 extends OpMode {
                 }
                 break;
 
-            case 3:
+            case 4:
+            /* You could check for
+            - Follower State: "if(!follower.isBusy()) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Robot Position: "if(follower.getPose().getX() > 36) {}"
+            */
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(!follower.isBusy()) {
+                    /* Grab Sample */
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    follower.followPath(Pickup2setup,true);
+                    //intake
+                    intake.setPower(-1);
+                    setPathState(5);
+                }
+                break;
+
+            case 5:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Grab Sample */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup1,true);
-                    //intake
-                    intake.setPower(-1);
 
-                    if(follower.getPose().getX() > 13) {
+                    if(follower.getPose().getX() > 14 && follower.getPose().getY() > 58) {
                         intake.setPower(0);
-                        setPathState(4);
+                        setPathState(6);
                     }
                 }
                 break;
 
 
-            case 4:
+            case 6:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if(!follower.isBusy()) {
                    //shoot
@@ -207,17 +249,17 @@ public class AutonV1 extends OpMode {
                 }
                 break;
 
-            case 5:
+            case 7:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    //"park" at 72,72
+                    //"park"
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(homePose,true);
-                    setPathState(6);
+                    setPathState(8);
                 }
                 break;
 
-            case 6:
+            case 8:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
