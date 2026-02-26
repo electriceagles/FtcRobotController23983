@@ -10,17 +10,27 @@ public class servotest extends LinearOpMode {
     public Servo gate;
     public CRServo gekko;
 
+
     @Override public void runOpMode() {
         gate = hardwareMap.get(Servo.class, "gate");
         gekko = hardwareMap.get(CRServo.class, "gekko");
 
+        gate.setPosition(0);
+
+        waitForStart();
+
         //SERVO SYSTEM MUST BE TUNED LATER TO RIGHT POSITIONS
-        if (gamepad1.right_trigger > 0.1) {
-            gate.setPosition(0.5); // moves servo 90 degrees
-            gekko.setPower(-1);
-        } else {
-            gate.setPosition(0); // moves back to og position
-            gekko.setPower(0);
+
+        while (opModeIsActive()) {
+
+            if (gamepad1.right_bumper) {
+                gate.setPosition(-0.5); // moves home
+                gekko.setPower(-1);
+            } else if (gamepad1.left_bumper) {
+                gate.setPosition(0); // moves back to gate
+                gekko.setPower(0);
+            }
         }
+
     }
 }
