@@ -39,10 +39,10 @@ public class AutonV1 extends OpMode {
     private double GATE_CLOSE_TIME = 0.4; //time it takes for gate to reset
 
     private final Pose startPose = new Pose(56, 8, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(72, 72, Math.toRadians(138)); // Scoring Pose of our robot. It is facing the goal at a 138 degree angle.
+    private final Pose scorePose = new Pose(56, 104, Math.toRadians(140)); // Scoring Pose of our robot. It is facing the goal at a 138 degree angle.
     private final Pose pickup1Pose = new Pose(15.244299674267102, 83.72638436482086, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickup2Pose = new Pose(13.8371335504886, 59.57003257328989, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose returnPose = new Pose(72, 72, Math.toRadians(90));
+    private final Pose returnPose = new Pose(56, 104, Math.toRadians(90));
 
     private Path scorePreload;
     private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, homePose;
@@ -93,8 +93,11 @@ public class AutonV1 extends OpMode {
                 /* Score Preload */
                 follower.followPath(scorePreload);
                 //shoot:
-                shooter1.setVelocity(shooterRPM);
-                shooter2.setVelocity(shooterRPM);
+                if (follower.getPose().getX() > 54 && follower.getPose().getY() > 102 ) {
+                    stateTimer.reset();
+                    shooter1.setVelocity(shooterRPM);
+                    shooter2.setVelocity(shooterRPM);
+                }
 
                 if (stateTimer.seconds() > revTime){
                     gate.setPosition(GATE_OPEN_ANGLE);
@@ -139,8 +142,11 @@ public class AutonV1 extends OpMode {
                     follower.followPath(scorePickup1,true);
 
                     //shoot:
-                    shooter1.setVelocity(shooterRPM);
-                    shooter2.setVelocity(shooterRPM);
+                    if (follower.getPose().getX() > 54 && follower.getPose().getY() > 102 ) {
+                        stateTimer.reset();
+                        shooter1.setVelocity(shooterRPM);
+                        shooter2.setVelocity(shooterRPM);
+                    }
 
                     if (stateTimer.seconds() > revTime){
                         gate.setPosition(GATE_OPEN_ANGLE);
@@ -180,8 +186,12 @@ public class AutonV1 extends OpMode {
                    //shoot
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup2,true);
-                    shooter1.setVelocity(shooterRPM);
-                    shooter2.setVelocity(shooterRPM);
+
+                    if (follower.getPose().getX() > 54 && follower.getPose().getY() > 102 ) {
+                        stateTimer.reset();
+                        shooter1.setVelocity(shooterRPM);
+                        shooter2.setVelocity(shooterRPM);
+                    }
 
                     if (stateTimer.seconds() > revTime){
                         gate.setPosition(GATE_OPEN_ANGLE);
@@ -220,7 +230,6 @@ public class AutonV1 extends OpMode {
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();
-        stateTimer.reset();
     }
 
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
