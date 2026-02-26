@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.superTele.Testing;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -30,15 +28,6 @@ public class TeleOpOdoV3 extends OpMode {
 
     CRServo gekko;
 
-    private Limelight3A limelight;
-    public double tx = 0;
-    public double ty = 0;
-
-    public double lastError = 0;
-    public double kP = 0.1567; //change based on onbot java values
-    public double kD = 0.08;
-
-    ElapsedTime timer = new ElapsedTime();
     private TurretSubsystem turretSubsystem;
 
     // Odometry
