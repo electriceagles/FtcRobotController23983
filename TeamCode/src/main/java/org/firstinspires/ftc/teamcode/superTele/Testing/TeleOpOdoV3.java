@@ -49,9 +49,8 @@ public class TeleOpOdoV3 extends OpMode {
     double F = 14.05;
     double curTargetVelocity = 0;
 
-    // Turret constants
-    final double TICKS_PER_REV = 2150.8;
-    final double TICKS_PER_RAD = TICKS_PER_REV / (2 * Math.PI);
+    // servo
+
 
     // field target (in inches for red)
     final double xTarget = 133;
@@ -83,6 +82,8 @@ public class TeleOpOdoV3 extends OpMode {
         intake = hardwareMap.get(DcMotorEx.class, "i");
         gate = hardwareMap.get(Servo.class, "gate");
         gekko = hardwareMap.get(CRServo.class, "gekko");
+
+        gate.setPosition(0.5);
 
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
@@ -125,14 +126,14 @@ public class TeleOpOdoV3 extends OpMode {
             intake.setPower(1);
             gekko.setPower(-1);
         } else if (gamepad1.left_bumper) {
-            gate.setPosition(23); // tune
+            gate.setPosition(0); // tune
             intake.setPower(-1);
         } else if (gamepad1.left_trigger > 0.1) {
             intake.setPower(-1);
             gekko.setPower(-1);
         } else {
             intake.setPower(0);
-            gate.setPosition(0); //tune
+            gate.setPosition(0.5); //tune
             gekko.setPower(0);
         }
 
