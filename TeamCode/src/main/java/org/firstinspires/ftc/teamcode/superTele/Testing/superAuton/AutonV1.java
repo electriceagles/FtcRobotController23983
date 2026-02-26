@@ -102,7 +102,6 @@ public class AutonV1 extends OpMode {
                 }
 
                 if (stateTimer.seconds() > 6) {
-                    stateTimer.reset();
                     shooter1.setVelocity(0);
                     shooter2.setVelocity(0);
                     gate.setPosition(GATE_CLOSE_ANGLE);
@@ -149,7 +148,6 @@ public class AutonV1 extends OpMode {
                     }
 
                     if (stateTimer.seconds() > 6) {
-                        stateTimer.reset();
                         shooter1.setVelocity(0);
                         shooter2.setVelocity(0);
                         gate.setPosition(GATE_CLOSE_ANGLE);
@@ -191,7 +189,6 @@ public class AutonV1 extends OpMode {
                     }
 
                     if (stateTimer.seconds() > 6) {
-                        stateTimer.reset();
                         shooter1.setVelocity(0);
                         shooter2.setVelocity(0);
                         gate.setPosition(GATE_CLOSE_ANGLE);
@@ -223,6 +220,7 @@ public class AutonV1 extends OpMode {
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();
+        stateTimer.reset();
     }
 
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
