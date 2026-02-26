@@ -34,7 +34,7 @@ public class AutonV1 extends OpMode {
     private double shooterRPM = 1120; //time it takes for gate to reset
     private double revTime = 3.5; //time it takes for gate to reset
     private double GATE_CLOSE_ANGLE = 0; //tune
-    private double GATE_OPEN_ANGLE = 90; //tune
+    private double GATE_OPEN_ANGLE = 0.5; //tune
     private double GATE_OPEN_TIME = 0.4;
     private double GATE_CLOSE_TIME = 0.4; //time it takes for gate to reset
 
@@ -184,7 +184,7 @@ public class AutonV1 extends OpMode {
                         shooter1.setVelocity(0);
                         shooter2.setVelocity(0);
                         gate.setPosition(GATE_CLOSE_ANGLE);
-                        setPathState(3);
+                        setPathState(4);
 
                     }
                 }
@@ -212,7 +212,7 @@ public class AutonV1 extends OpMode {
                 if(!follower.isBusy()) {
                     /* Grab Sample */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(grabPickup1,true);
+                    follower.followPath(grabPickup2,true);
 
                     if(follower.getPose().getX() > 14 && follower.getPose().getY() > 58) {
                         intake.setPower(0);
@@ -244,7 +244,7 @@ public class AutonV1 extends OpMode {
                         shooter1.setVelocity(0);
                         shooter2.setVelocity(0);
                         gate.setPosition(GATE_CLOSE_ANGLE);
-                        setPathState(5);
+                        setPathState(7);
                     }
                 }
                 break;
