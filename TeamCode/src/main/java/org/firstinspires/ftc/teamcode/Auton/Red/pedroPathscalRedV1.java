@@ -159,13 +159,13 @@ public class pedroPathscalRedV1 extends OpMode {
 
                 if (shooter.atSpeed() && !shotsTriggered) {
                     intake.setPower(1);
-                    hardware.servo.setPosition(0.67);
+                    //hardware.servo.setPosition(0.67);
                     shotsTriggered = true;
                     pathTimer.resetTimer();
                 }
 
                 if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                    hardware.servo.setPosition(0);
+                    //hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
                     setPathState(pedroPathscalRedV1.PathState.Intake1);
@@ -186,13 +186,13 @@ public class pedroPathscalRedV1 extends OpMode {
 
                 if (shooter.atSpeed() && !shotsTriggered) {
                     intake.setPower(1);
-                    hardware.servo.setPosition(0.67);
+                    //hardware.servo.setPosition(0.67);
                     shotsTriggered = true;
                     pathTimer.resetTimer();
                 }
 
                 if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                    hardware.servo.setPosition(0);
+                    //hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
                     setPathState(pedroPathscalRedV1.PathState.Intake2);
@@ -219,13 +219,13 @@ public class pedroPathscalRedV1 extends OpMode {
 
                 if (shooter.atSpeed() && !shotsTriggered) {
                     intake.setPower(1);
-                    hardware.servo.setPosition(0.67);
+                    //hardware.servo.setPosition(0.67);
                     shotsTriggered = true;
                     pathTimer.resetTimer();
                 }
 
                 if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                    hardware.servo.setPosition(0);
+                    //hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
                     setPathState(pedroPathscalRedV1.PathState.Intake3);
@@ -246,13 +246,13 @@ public class pedroPathscalRedV1 extends OpMode {
 
                 if (shooter.atSpeed() && !shotsTriggered) {
                     intake.setPower(1);
-                    hardware.servo.setPosition(0.67);
+                    //hardware.servo.setPosition(0.67);
                     shotsTriggered = true;
                     pathTimer.resetTimer();
                 }
 
                 if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                    hardware.servo.setPosition(0);
+                    //hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
                     setPathState(pedroPathscalRedV1.PathState.Out);
