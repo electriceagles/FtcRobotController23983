@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Hardware.TurretSubsystem;
 
 @Configurable
 @TeleOp
-public class TeleOpOdoV3 extends OpMode {
+public class WayneTuning extends OpMode {
 
 
     DcMotorEx lf, lr, rf, rr;
@@ -30,12 +30,16 @@ public class TeleOpOdoV3 extends OpMode {
 
     Servo gate;
 
-    CRServo gekko;
 
     private TurretSubsystem turretSubsystem;
 
     private static double hide = 0;
     private static double show = 0.8;
+
+    private static double Triangle = 1040;
+    private static double Square = 1120;
+    private static double Cross = 1580;
+    private static double RightBumper = 1200;
 
     // Odometry
     GoBildaPinpointDriver pinpoint;
@@ -77,7 +81,6 @@ public class TeleOpOdoV3 extends OpMode {
         // intake
         intake = hardwareMap.get(DcMotorEx.class, "i");
         gate = hardwareMap.get(Servo.class, "gate");
-        gekko = hardwareMap.get(CRServo.class, "gekko");
 
         gate.setDirection(Servo.Direction.REVERSE);
         gate.setPosition(show);
@@ -139,13 +142,13 @@ public class TeleOpOdoV3 extends OpMode {
 
         // shooting velocity selector
         if (gamepad1.triangle) {
-            curTargetVelocity = 1040;
+            curTargetVelocity = Triangle;
         } else if (gamepad1.square) {
-            curTargetVelocity = 1120;
+            curTargetVelocity = Square;
         } else if (gamepad1.cross) {
-            curTargetVelocity = 1580;
+            curTargetVelocity = Cross;
         } else if (gamepad1.right_bumper) {
-            curTargetVelocity = 1200;
+            curTargetVelocity = RightBumper;
         } else {
             curTargetVelocity = 0;
         }
