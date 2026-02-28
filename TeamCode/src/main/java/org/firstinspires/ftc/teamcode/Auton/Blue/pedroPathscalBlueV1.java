@@ -51,8 +51,7 @@ public class pedroPathscalBlueV1 extends OpMode {
 
     }
     PathState pathState;
-    private final Pose startPose = new Pose(59.29519450800915,7,Math.toRadians(90));
-    private final Pose shootPose = new Pose(59.29519450800915,84.27459954233409,Math.toRadians(129));
+    public PathChain driveStart;
     public PathChain intake1in;
     public PathChain intake1out;
     public PathChain intake2in;
@@ -61,14 +60,17 @@ public class pedroPathscalBlueV1 extends OpMode {
     public PathChain intake3in;
     public PathChain intake3out;
     public PathChain outOfZone;
-    private PathChain driveStart;
-    public void buildPaths(){
-        //Starting,Ending
-        driveStart = follower.pathBuilder()
-                .addPath(new BezierLine(startPose,shootPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),shootPose.getHeading())
-                .build();
 
+    public void buildPaths(){
+        driveStart = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(20.412, 124.144),
+
+                                new Pose(59.295, 84.275)
+                            )
+                  ).setLinearHeadingInterpolation(Math.toRadians(144), Math.toRadians(132))
+
+                .build();
         intake1in = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(59.295, 84.275),
