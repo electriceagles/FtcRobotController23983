@@ -28,8 +28,6 @@ public class WayneTuning extends OpMode {
     DcMotorEx turret;
     DcMotorEx shooter1, shooter2;
 
-    Servo gate;
-
 
     private TurretSubsystem turretSubsystem;
 
@@ -81,9 +79,7 @@ public class WayneTuning extends OpMode {
 
         // intake
         intake = hardwareMap.get(DcMotorEx.class, "i");
-        gate = hardwareMap.get(Servo.class, "gate");
 
-        gate.setDirection(Servo.Direction.REVERSE);
 
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
@@ -124,16 +120,14 @@ public class WayneTuning extends OpMode {
         // intake or transfer
         if (gamepad1.left_bumper) {
             intake.setPower(1);
-        } else {
-            intake.setPower(0);
-        }
-
-
-        if (gamepad1.left_trigger > 0.1) {
+        } else if (gamepad1.left_trigger > 0.1) {
             intake.setPower(-1);
         } else {
             intake.setPower(0);
         }
+
+
+
 
         // shooting velocity selector
         if (gamepad1.triangle) {
@@ -182,7 +176,7 @@ public class WayneTuning extends OpMode {
         double heading = pose.getHeading(AngleUnit.RADIANS);
 
         //calculation to align turret with target
-        double targetDirection = Math.atan2(xTarget - xRobot, yTarget - yRobot);
+        double targetDirection = Math.atan2(yTarget - yRobot, xTarget - xRobot);
         double turretTargetAngle = AngleUnit.normalizeRadians(targetDirection - heading);
 
         turretSubsystem.setRotationalTarget(turretTargetAngle);
