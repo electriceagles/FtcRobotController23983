@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.Auton.Blue;
 
 import static android.os.SystemClock.sleep;
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -17,8 +20,10 @@ import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
+@Configurable
 public class pedroPathscalBlueV1 extends OpMode {
 
+    private TelemetryManager panelsTelemetry; // Panels Telemetry instance
 
     public DcMotorEx intake;
     private Follower follower;
@@ -271,6 +276,8 @@ public class pedroPathscalBlueV1 extends OpMode {
 
     @Override
     public void init(){
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+
         pathState = PathState.Drive_Start2Shoot;
         pathTimer = new Timer();
         opModeTimer = new Timer();
@@ -289,11 +296,11 @@ public class pedroPathscalBlueV1 extends OpMode {
         shooter.update();
 
         statePathUpdate();
-        telemetry.addData("path state", pathState.toString());
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading",follower.getPose().getHeading());
-        telemetry.addData("Path Time", pathTimer.getElapsedTimeSeconds());
+        panelsTelemetry.debug("Path State", pathState);
+        panelsTelemetry.debug("X", follower.getPose().getX());
+        panelsTelemetry.debug("Y", follower.getPose().getY());
+        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.update(telemetry);
 
 
     }

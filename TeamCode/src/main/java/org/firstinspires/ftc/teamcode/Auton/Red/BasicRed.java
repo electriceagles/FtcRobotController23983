@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auton.Red;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
 @Autonomous
+@Configurable
 public class BasicRed extends OpMode {
     private Follower follower;
     public DcMotorEx intake;
@@ -67,13 +69,13 @@ public class BasicRed extends OpMode {
 
                 if (shooter.atSpeed() && !shotsTriggered) {
                     intake.setPower(1);
-                    hardware.servo.setPosition(0.67);
+                    //hardware.servo.setPosition(0.67);
                     shotsTriggered = true;
                     pathTimer.resetTimer();
                 }
 
                 if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                    hardware.servo.setPosition(0);
+                    //hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
                     setPathState(PathState.OutOfZone);

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auton.Blue;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.telemetry.PanelsTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -12,6 +10,9 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import com.bylazar.telemetry.TelemetryManager;
+import com.bylazar.telemetry.PanelsTelemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Auton.Logics.FlywheelLogic;
@@ -20,9 +21,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
 @Configurable
-public class BasicBlue extends OpMode {
-    private TelemetryManager panelsTelemetry; // Panels Telemetry instance
-
+public class OutBlue extends OpMode{
+    private TelemetryManager panelsTelemetry;
     private Follower follower;
     public DcMotorEx intake;
     public FlywheelLogic shooter = new FlywheelLogic();
@@ -31,71 +31,57 @@ public class BasicBlue extends OpMode {
     public RobotHardware hardware;
 
     private enum PathState{
-        Start,
-        ShootPreload,
-        OutOfZone,
+        Shoot,
+        Out,
     }
     PathState pathState;
-        public PathChain start;
-        public PathChain outOfZone;
-    public void buildPaths(){
-        start = follower.pathBuilder().addPath(
-                new BezierLine(new Pose(22.059, 126.627),
-
-                                new Pose(47.762, 95.149)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(144), Math.toRadians(133))
-
-                .build();
-        outOfZone = follower.pathBuilder().addPath(
+    public PathChain out;
+    public void buildPaths() {
+        out = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(47.762, 95.149),
+                                new Pose(56.513, 7.744),
 
-                                new Pose(28.620, 95.744)
+                                new Pose(36.723, 8.650)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setConstantHeadingInterpolation(Math.toRadians(90))
 
                 .build();
     }
     public void statePathUpdate(){
         switch (pathState) {
-            case Start:
-                follower.followPath(start, true);
-                setPathState(PathState.ShootPreload);
-                break;
-            case ShootPreload:
-                shooter.setTargetRPM(4200);
+            case Shoot:
+                shooter.setTargetRPM(8000);
 
                 if (shooter.atSpeed() && !shotsTriggered) {
                     intake.setPower(1);
-                    //hardware.servo.setPosition(0.67);
                     shotsTriggered = true;
                     pathTimer.resetTimer();
                 }
 
                 if (shotsTriggered && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                    //hardware.servo.setPosition(0);
                     intake.setPower(0);
                     shooter.stop();
-                    setPathState(PathState.OutOfZone);
+                    setPathState(PathState.Out);
                 }
                 break;
-                case OutOfZone:
-                    follower.followPath(outOfZone);
-                    break;
+            case Out:
+                follower.followPath(out);
+                break;
         }
+
     }
+
     @Override
     public void init(){
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-
-        pathState = BasicBlue.PathState.Start;
+        pathState = PathState.Shoot;
         pathTimer = new Timer();
         opModeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         shooter.init(hardwareMap);
         buildPaths();
     }
+
     private void setPathState(PathState newState){
         pathState = newState;
         pathTimer.resetTimer();
@@ -117,5 +103,6 @@ public class BasicBlue extends OpMode {
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
         panelsTelemetry.update(telemetry);
     }
+
 
 }
