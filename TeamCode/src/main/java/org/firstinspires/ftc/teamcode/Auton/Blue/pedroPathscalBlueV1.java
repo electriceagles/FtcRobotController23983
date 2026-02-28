@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.Auton.Logics.FlywheelLogic;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Disabled
 @TeleOp
 public class pedroPathscalBlueV1 extends OpMode {
 
@@ -278,6 +277,7 @@ public class pedroPathscalBlueV1 extends OpMode {
         opModeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         shooter.init(hardwareMap);
+        buildPaths();
     }
     public void start(){
         opModeTimer.resetTimer();

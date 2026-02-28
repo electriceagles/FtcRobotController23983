@@ -93,6 +93,7 @@ public class BasicRed extends OpMode {
         opModeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         shooter.init(hardwareMap);
+        buildPaths();
     }
 
     private void setPathState(PathState newState) {
