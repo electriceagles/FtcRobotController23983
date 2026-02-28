@@ -275,6 +275,7 @@ public class pedroPathscalRedV1 extends OpMode {
         opModeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         shooter.init(hardwareMap);
+        buildPaths();
     }
     public void start(){
         opModeTimer.resetTimer();
