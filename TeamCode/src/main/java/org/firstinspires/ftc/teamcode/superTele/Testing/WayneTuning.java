@@ -181,6 +181,10 @@ public class WayneTuning extends OpMode {
 
         turretSubsystem.setRotationalTarget(turretTargetAngle);
 
+        if (turretToggle == 1) {
+            turretSubsystem.updatePID(turret.getCurrentPosition());
+        }
+
         if (gamepad1.dpad_left) {
             turret.setPower(1);
         } else if (gamepad1.dpad_right) {
@@ -195,9 +199,6 @@ public class WayneTuning extends OpMode {
         }
 
 
-        if (turretToggle == 1) {
-            turretSubsystem.updatePID(turret.getCurrentPosition());
-        }
 
 
         telemetry.addData("target velocity", curTargetVelocity);

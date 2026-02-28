@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.superTele.Testing;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -11,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-@TeleOp(name = "TeleOP Odo Turret BLUE v1", group = "TeleOp")
+@Configurable
+@TeleOp(name = "Limelight Turret TeleOp", group = "TeleOp")
 public class TeleopOdoV1 extends OpMode {
 
     // Drive motors
@@ -23,19 +24,18 @@ public class TeleopOdoV1 extends OpMode {
     DcMotorEx turret;
     DcMotorEx shooter1, shooter2;
 
-    Servo gate;
-
-    CRServo gekko;
-
     private Limelight3A limelight;
+
     public double tx = 0;
     public double ty = 0;
 
-    public double lastError = 0;
-    public double kP = 0.1567; //change based on onbot java values
-    public double kD = 0.08;
+    private double lastError = 0;
+    private static double kP = 0.1567;
+    private static double kD = 0.08;
 
-    ElapsedTime timer = new ElapsedTime();
+    private int toggle = 0;
+
+    private ElapsedTime timer = new ElapsedTime();
 
     // Odometry
     GoBildaPinpointDriver pinpoint;
@@ -45,25 +45,16 @@ public class TeleopOdoV1 extends OpMode {
     double F = 14.05;
     double curTargetVelocity = 0;
 
-    // Turret constants
-    final double TICKS_PER_REV = 2150.8;
-    final double TICKS_PER_RAD = TICKS_PER_REV / (2 * Math.PI);
-
-    // field target (in inches for red)
-    final double xTarget = 133;
-    final double yTarget = 138;
-
     double powerMult = 0.9;
-
-    boolean visionTurret = false;
 
     @Override
     public void init() {
-        //limelight
+
+        // Limelight
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(2);
 
-        // drive
+        // Drive
         lf = hardwareMap.get(DcMotorEx.class, "lf");
         lr = hardwareMap.get(DcMotorEx.class, "lr");
         rf = hardwareMap.get(DcMotorEx.class, "rf");
@@ -74,19 +65,14 @@ public class TeleopOdoV1 extends OpMode {
         rf.setDirection(DcMotorSimple.Direction.REVERSE);
         rr.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // intake
+        // Intake
         intake = hardwareMap.get(DcMotorEx.class, "i");
-        gate = hardwareMap.get(Servo.class, "gate");
-        gekko = hardwareMap.get(CRServo.class, "gekko");
 
-        // turret
+        // Turret
         turret = hardwareMap.get(DcMotorEx.class, "turret");
-        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setTargetPosition(0);
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turret.setPower(0.65);
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // shooter
+        // Shooter
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
 
@@ -100,13 +86,14 @@ public class TeleopOdoV1 extends OpMode {
         shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
         shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
 
-        // pinpoint and odometry
+        // Odometry
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pinpoint.setOffsets(-84, -168, DistanceUnit.MM); // offset for pods (might have to change)
+        pinpoint.setEncoderResolution(
+                GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        pinpoint.setOffsets(-84, -168, DistanceUnit.MM);
 
-        //field start pose (inches)
-        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 56, 8, AngleUnit.DEGREES, 90));
+        pinpoint.setPosition(
+                new Pose2D(DistanceUnit.INCH, 56, 8, AngleUnit.DEGREES, 90));
 
         telemetry.addLine("Starting Pose: 56, 8, 90º");
     }
@@ -114,12 +101,13 @@ public class TeleopOdoV1 extends OpMode {
     @Override
     public void start() {
         limelight.start();
+        timer.reset();
     }
 
     @Override
     public void loop() {
 
-       //drive
+        // Drive
         double y = gamepad1.left_stick_y;
         double x = -gamepad1.left_stick_x;
         double rx = -gamepad1.right_stick_x;
@@ -129,97 +117,82 @@ public class TeleopOdoV1 extends OpMode {
         lr.setPower((y - x + rx * 0.8) * powerMult);
         rr.setPower((y + x - rx * 0.8) * powerMult);
 
-        // intake or transfer
-        if (gamepad1.dpad_up) {
+        // Intake
+        if (gamepad1.left_bumper) {
             intake.setPower(1);
-            gekko.setPower(-1);
-        } else if (gamepad1.left_bumper) {
-            gate.setPosition(23); // tune
-            intake.setPower(-1);
         } else if (gamepad1.left_trigger > 0.1) {
             intake.setPower(-1);
-            gekko.setPower(-1);
         } else {
             intake.setPower(0);
-            gate.setPosition(0); //tune
-            gekko.setPower(0);
         }
 
-        // shooting velocity selector
+        // Shooter velocity selector
         if (gamepad1.triangle) {
             curTargetVelocity = 1040;
         } else if (gamepad1.square) {
-            curTargetVelocity = 1120;
+            curTargetVelocity = 1250;
         } else if (gamepad1.cross) {
-            curTargetVelocity = 1580;
+            curTargetVelocity = 1500;
         } else if (gamepad1.right_bumper) {
-            curTargetVelocity = 1200;
+            curTargetVelocity = 1170;
+        } else if (gamepad1.right_trigger > 0.1) {
+            curTargetVelocity = -1080;
         } else {
             curTargetVelocity = 0;
         }
 
-
         shooter1.setVelocity(curTargetVelocity);
         shooter2.setVelocity(curTargetVelocity);
 
-        double curVelocity1 = shooter1.getVelocity();
+        double error = shooter1.getVelocity() - curTargetVelocity;
 
-        double error1 = curVelocity1 - curTargetVelocity;
-
-        if (curTargetVelocity > 0 && Math.abs(error1) == 50){
+        if (curTargetVelocity > 0 && Math.abs(error) < 50) {
             gamepad1.rumbleBlips(2);
         }
 
-        //odometry update and data
-        pinpoint.update();
+        // Toggle Limelight control
+        if (gamepad1.dpadUpWasPressed()) toggle = 1;
+        if (gamepad1.dpadDownWasPressed()) toggle = 0;
 
-        Pose2D pose = pinpoint.getPosition();
-
-        double xRobot = pose.getX(DistanceUnit.INCH);
-        double yRobot = pose.getY(DistanceUnit.INCH);
-        double heading = pose.getHeading(AngleUnit.RADIANS);
-
-        //calculation to align turret with target
-        double targetDirection = Math.atan2(xTarget - xRobot, yTarget - yRobot);
-        double turretTargetAngle = AngleUnit.normalizeRadians(targetDirection - heading);
-        int targetTicks = (int)(turretTargetAngle * TICKS_PER_RAD);
-
-        if (gamepad1.right_bumper || gamepad1.triangle || gamepad1.square || gamepad1.cross) {
-            turret.setTargetPosition(targetTicks);
+        // Manual turret mode
+        if (toggle == 0) {
+            if (gamepad1.dpad_left) {
+                turret.setPower(0.3);
+            } else if (gamepad1.dpad_right) {
+                turret.setPower(-0.3);
+            } else {
+                turret.setPower(0);
+            }
         }
 
+        // Limelight auto-aim mode
+        if (toggle == 1) {
 
-        //switching to vision turret aim (failsafe)
-        if (gamepad1.dpad_left) {
-            visionTurret = true;
-        } else {
-            visionTurret = false;
-        }
-
-        //limelight visionTurret function
-        if (visionTurret) {
             LLStatus status = limelight.getStatus();
-            telemetry.addData("Name", "%s",
-                    status.getName());
-            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                    status.getTemp(), status.getCpu(), (int) status.getFps());
-            telemetry.addData("Pipeline", "Index: %d, Type: %s",
-                    status.getPipelineIndex(), status.getPipelineType());
+            telemetry.addData("LL Name", status.getName());
+            telemetry.addData("Temp/CPU/FPS",
+                    "%.1fC | %.1f%% | %d",
+                    status.getTemp(),
+                    status.getCpu(),
+                    (int) status.getFps());
 
-            //limelight tag aim
             LLResult result = limelight.getLatestResult();
+
             if (result != null && result.isValid()) {
+
                 tx = result.getTx();
-                ty = result.getTy();
 
                 double errorChange = tx - lastError;
+                double dt = timer.seconds();
+                double derivative = 0;
 
-                double derivative = errorChange / timer.seconds();
+                if (dt > 0.001) {
+                    derivative = errorChange / dt;
+                }
 
                 double motorPower = (tx * kP) + (derivative * kD);
 
                 motorPower = Math.max(-0.5, Math.min(0.5, motorPower));
-
 
                 if (Math.abs(tx) < 3) {
                     turret.setPower(0);
@@ -231,21 +204,16 @@ public class TeleopOdoV1 extends OpMode {
                 timer.reset();
 
                 telemetry.addData("Target X", tx);
-                telemetry.addData("power", motorPower);
+                telemetry.addData("Turret Power", motorPower);
+
             } else {
                 turret.setPower(0);
-                telemetry.addData("Limelight", "No Targets");
+                telemetry.addLine("No Limelight Target");
             }
         }
 
-        //telemetry
-        telemetry.addData("Robot X", xRobot);
-        telemetry.addData("Robot Y", yRobot);
-        telemetry.addData("Heading", heading);
-        telemetry.addData("Turret Target Ticks", targetTicks);
         telemetry.addData("Target Velocity", curTargetVelocity);
         telemetry.addData("Current Velocity", shooter1.getVelocity());
         telemetry.update();
-
     }
 }
