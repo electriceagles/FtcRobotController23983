@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Auton.Red;
 
 import static android.os.SystemClock.sleep;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
+@Configurable
 public class pedroPathscalRedV1 extends OpMode {
 
 
