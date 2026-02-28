@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+@Autonomous
 public class AutonGate {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;

@@ -29,7 +29,6 @@ public class AutonV1 extends OpMode {
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
     private DcMotorEx intake;
-    private Servo gate;
 
     private double shooterRPM = 1120; //time it takes for gate to reset
     private double revTime = 3.5; //time it takes for gate to reset
@@ -298,11 +297,8 @@ public class AutonV1 extends OpMode {
         buildPaths();
         follower.setStartingPose(startPose);
 
-    }
-    public void init (HardwareMap hwMap) {
-        gate = hwMap.get(Servo.class, "gate");
-        shooter1 = hwMap.get(DcMotorEx.class, "sf1");
-        shooter2 = hwMap.get(DcMotorEx.class, "sf2");
+        shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
+        shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
 
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -310,16 +306,13 @@ public class AutonV1 extends OpMode {
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        intake = hwMap.get(DcMotorEx.class, "i");
+        intake = hardwareMap.get(DcMotorEx.class, "i");
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(111.40100, 0, 0, 14.05);
 
         shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
-
-        shooter1.setPower(0);
-        shooter2.setPower(0);
     }
 
 
