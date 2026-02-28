@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous
 public class BasicBlue extends OpMode {
     private Follower follower;
-    private DcMotorEx intake;
+    public DcMotorEx intake;
     private FlywheelLogic shooter = new FlywheelLogic();
     private Timer pathTimer, opModeTimer;
     private boolean shotsTriggered = false;
