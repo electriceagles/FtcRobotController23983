@@ -30,8 +30,8 @@ public class TeleopOdoV1 extends OpMode {
     public double ty = 0;
 
     private double lastError = 0;
-    private static double kP = 0.1567;
-    private static double kD = 0.08;
+    private static double kP = 0.02;
+    private static double kD = 0.003;
 
     private int toggle = 0;
 
@@ -71,6 +71,7 @@ public class TeleopOdoV1 extends OpMode {
         // Turret
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turret.setDirection(DcMotorEx.Direction.REVERSE);
 
         // Shooter
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
@@ -157,9 +158,9 @@ public class TeleopOdoV1 extends OpMode {
         // Manual turret mode
         if (toggle == 0) {
             if (gamepad1.dpad_left) {
-                turret.setPower(0.3);
-            } else if (gamepad1.dpad_right) {
                 turret.setPower(-0.3);
+            } else if (gamepad1.dpad_right) {
+                turret.setPower(0.3);
             } else {
                 turret.setPower(0);
             }
