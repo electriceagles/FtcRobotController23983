@@ -176,9 +176,9 @@ public class TeleOpOdoV3 extends OpMode {
         double targetDirection = Math.atan2(xTarget - xRobot, yTarget - yRobot);
         double turretTargetAngle = AngleUnit.normalizeRadians(targetDirection - heading);
 
-        //turretSubsystem.setRotationalTarget(turretTargetAngle);
+        turretSubsystem.setRotationalTarget(turretTargetAngle);
 
-        //turretSubsystem.updatePID(turret.getCurrentPosition());
+        turretSubsystem.updatePID(turret.getCurrentPosition());
 
         telemetry.addData("target velocity", curTargetVelocity);
         telemetry.addLine("--------------------------------");
