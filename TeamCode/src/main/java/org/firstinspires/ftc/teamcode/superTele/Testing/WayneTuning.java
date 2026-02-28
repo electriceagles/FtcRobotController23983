@@ -36,6 +36,9 @@ public class WayneTuning extends OpMode {
     private static double hide = 0;
     private static double show = 0.8;
 
+    private static int turretToggle = 0;
+
+
     private static double Triangle = 1040;
     private static double Square = 1120;
     private static double Cross = 1580;
@@ -162,7 +165,7 @@ public class WayneTuning extends OpMode {
         double error1 = curVelocity1 - curTargetVelocity;
 
         if (curTargetVelocity > 0 && Math.abs(error1) < 50){
-            gamepad1.rumbleBlips(2);
+            gamepad1.rumbleBlips(1);
         }
 
         //turret?
@@ -179,11 +182,19 @@ public class WayneTuning extends OpMode {
         double targetDirection = Math.atan2(xTarget - xRobot, yTarget - yRobot);
         double turretTargetAngle = AngleUnit.normalizeRadians(targetDirection - heading);
 
-        //turretSubsystem.setRotationalTarget(turretTargetAngle);
+        turretSubsystem.setRotationalTarget(turretTargetAngle);
 
-        //turretSubsystem.updatePID(turret.getCurrentPosition());
+
+        if (turretToggle == 1) {
+            turretSubsystem.updatePID(turret.getCurrentPosition());
+        }
+
 
         telemetry.addData("target velocity", curTargetVelocity);
+
+        telemetry.addData("x", xRobot);
+        telemetry.addData("y", yRobot);
+        telemetry.addData("header", yRobot);
         telemetry.addLine("--------------------------------");
         telemetry.addData("Angle (deg)", turretSubsystem.getAngleInDegrees());
         telemetry.addData("Target Ticks", turretSubsystem.targetTicks);
