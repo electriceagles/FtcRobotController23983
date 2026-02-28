@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.Auton.Logics.FlywheelLogic;
 import org.firstinspires.ftc.teamcode.Hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Disabled
 @TeleOp
 public class BasicBlue extends OpMode {
     private Follower follower;
