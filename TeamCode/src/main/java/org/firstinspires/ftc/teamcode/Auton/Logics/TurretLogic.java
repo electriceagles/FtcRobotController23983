@@ -17,7 +17,7 @@ public class TurretLogic {
     public void init(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "Limelight");
         turret = hardwareMap.get(DcMotorEx.class, "turret");
-        limelight.pipelineSwitch(2);
+        limelight.pipelineSwitch(1);
 
         limelight.start(); //startup
         LLStatus status = limelight.getStatus(); //info abt limelight, helpful for debugging and stuff
@@ -38,7 +38,7 @@ public class TurretLogic {
                 turret.setPower(0.3);
             } else if (tx < -2) {
                 turret.setPower(-0.3);
-            } else {
+            } else if(tx < 2 && tx > -2){
                 turret.setPower(0);
             }
         } else {
