@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-@Autonomous(name = "6 ball blue")
-public class th2ball extends LinearOpMode {
+@Autonomous(name = "6 ball")
+public class th3ball extends LinearOpMode {
 
     DcMotorEx lf, lr, rf, rr;
     DcMotorEx turret;
@@ -77,10 +77,10 @@ public class th2ball extends LinearOpMode {
             intake.setPower(0);
 
             // Turn ~45 degrees
-            lf.setPower(0.5);
-            lr.setPower(0.5);
-            rf.setPower(-0.5);
-            rr.setPower(-0.5);
+            lf.setPower(-0.5);
+            lr.setPower(-0.5);
+            rf.setPower(0.5);
+            rr.setPower(0.5);
             sleep(140);
 
             stopDrive();
@@ -108,13 +108,14 @@ public class th2ball extends LinearOpMode {
 
             stopDrive();
 
-            lf.setPower(-0.5);
-            lr.setPower(-0.5);
-            rf.setPower(0.5);
-            rr.setPower(0.5);
+            lf.setPower(0.5);
+            lr.setPower(0.5);
+            rf.setPower(-0.5);
+            rr.setPower(-0.5);
             sleep(140);
 
             stopDrive();
+
 
 
             // Final shooter spin
