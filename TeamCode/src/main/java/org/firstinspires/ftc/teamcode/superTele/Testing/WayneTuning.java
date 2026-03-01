@@ -28,13 +28,9 @@ public class WayneTuning extends OpMode {
     DcMotorEx turret;
     DcMotorEx shooter1, shooter2;
 
-    Servo gate;
-
 
     private TurretSubsystem turretSubsystem;
 
-    private static double hide = 0;
-    private static double show = 0.8;
 
     private static int turretToggle = 0;
 
@@ -83,10 +79,7 @@ public class WayneTuning extends OpMode {
 
         // intake
         intake = hardwareMap.get(DcMotorEx.class, "i");
-        gate = hardwareMap.get(Servo.class, "gate");
 
-        gate.setDirection(Servo.Direction.REVERSE);
-        gate.setPosition(show);
 
         shooter1 = hardwareMap.get(DcMotorEx.class, "sf1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "sf2");
@@ -125,23 +118,16 @@ public class WayneTuning extends OpMode {
         rr.setPower((y + x - rx * 0.8) * powerMult);
 
         // intake or transfer
-        if (gamepad1.dpad_up) {
-            intake.setPower(1);
-        } else {
-            intake.setPower(0);
-        }
-
         if (gamepad1.left_bumper) {
-            gate.setPosition(hide); // tune
-        } else {
-            gate.setPosition(show); //tune
-        }
-
-        if (gamepad1.left_trigger > 0.1) {
+            intake.setPower(1);
+        } else if (gamepad1.left_trigger > 0.1) {
             intake.setPower(-1);
         } else {
             intake.setPower(0);
         }
+
+
+
 
         // shooting velocity selector
         if (gamepad1.triangle) {
@@ -152,10 +138,21 @@ public class WayneTuning extends OpMode {
             curTargetVelocity = Cross;
         } else if (gamepad1.right_bumper) {
             curTargetVelocity = RightBumper;
+        } else if (gamepad1.right_trigger > 0) {
+            curTargetVelocity = -1080;
         } else {
             curTargetVelocity = 0;
         }
 
+
+
+        if(gamepad1.dpad_left) {
+            turret.setPower(0.6);
+        } else if (gamepad1.dpad_right) {
+            turret.setPower(-0.6);
+        } else {
+            turret.setPower(0);
+        }
 
         shooter1.setVelocity(curTargetVelocity);
         shooter2.setVelocity(curTargetVelocity);
@@ -179,15 +176,29 @@ public class WayneTuning extends OpMode {
         double heading = pose.getHeading(AngleUnit.RADIANS);
 
         //calculation to align turret with target
-        double targetDirection = Math.atan2(xTarget - xRobot, yTarget - yRobot);
+        double targetDirection = Math.atan2(yTarget - yRobot, xTarget - xRobot);
         double turretTargetAngle = AngleUnit.normalizeRadians(targetDirection - heading);
 
         turretSubsystem.setRotationalTarget(turretTargetAngle);
 
-
         if (turretToggle == 1) {
             turretSubsystem.updatePID(turret.getCurrentPosition());
         }
+
+        if (gamepad1.dpad_left) {
+            turret.setPower(1);
+        } else if (gamepad1.dpad_right) {
+            turret.setPower(-1);
+        }
+
+        if (gamepad1.dpad_up) {
+            turretToggle = 1;
+        }
+        if (gamepad1.dpad_down) {
+            turretToggle = 0;
+        }
+
+
 
 
         telemetry.addData("target velocity", curTargetVelocity);

@@ -17,8 +17,8 @@ public class TurretSubsystem {
     public double dt;
     public long lastTime;
 
-    public static double kP = 0.006; // TODO: Tune these
-    public static double kD = 0.00006;
+    public static double kD = 0.000000001; // TODO: Tune these
+    public static double kP = 0.0072;
 
     public double TURRET_GEAR_RATIO = 4; // CALCULATE THIS
     public double MOTOR_GEAR_RATIO = 19.2; //TODO: CALCULATE THIS
