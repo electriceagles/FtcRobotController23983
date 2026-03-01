@@ -31,7 +31,7 @@ public class pedroPathscalBlueV1 extends OpMode {
     //FLYWHEEL LOGIC SETUP
     private FlywheelLogic shooter = new FlywheelLogic();
     private boolean shotsTriggered = false;
-    private RobotHardware hardware;
+    public RobotHardware hardware;
 
     public enum PathState{
         Drive_Start2Shoot,
@@ -67,9 +67,9 @@ public class pedroPathscalBlueV1 extends OpMode {
                                 new Pose(20.412, 124.144),
 
                                 new Pose(59.295, 84.275)
-                            )
-                  ).setLinearHeadingInterpolation(Math.toRadians(144), Math.toRadians(132))
-
+                        )
+                ).setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
         intake1in = follower.pathBuilder().addPath(
                         new BezierLine(
