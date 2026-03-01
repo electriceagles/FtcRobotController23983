@@ -60,12 +60,12 @@ public class pedroPathscalRedV1 extends OpMode {
     public void buildPaths(){
         start = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(84.705, 7.000),
+                                new Pose(125.236, 123.650),
 
                                 new Pose(84.705, 84.275)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(44))
-
+                ).setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         intake1in = follower.pathBuilder().addPath(
