@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-@Autonomous(name = "6 ball")
-public class th3ball extends LinearOpMode {
+@Autonomous(name = "Far side - blue")
+public class FarSideBlue extends LinearOpMode {
 
     DcMotorEx lf, lr, rf, rr;
     DcMotorEx turret;
@@ -28,6 +28,7 @@ public class th3ball extends LinearOpMode {
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         lf.setDirection(DcMotorSimple.Direction.FORWARD);
         lr.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -55,86 +56,29 @@ public class th3ball extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            // Drive forward
-            lf.setPower(0.7);
-            lr.setPower(0.7);
-            rf.setPower(0.7);
-            rr.setPower(0.7);
-            sleep(500);
-
-            stopDrive();
-
             // Spin up shooters
-            shooter1.setVelocity(1160);
-            shooter2.setVelocity(1160);
+            shooter1.setVelocity(1495);
+            shooter2.setVelocity(1495);
             sleep(3000);
 
             // Run intake
             intake.setPower(-1);
-            sleep(8000);
+            sleep(5000);
 
             shooter1.setVelocity(0);
             shooter2.setVelocity(0);
             intake.setPower(0);
 
-            // Turn ~45 degrees
-            lf.setPower(-0.5);
-            lr.setPower(-0.5);
-            rf.setPower(0.5);
-            rr.setPower(0.5);
-            sleep(140);
-
-            stopDrive();
-
-            //intake
-
-
-            lf.setPower(-0.7);
+            // strafe left
+            lf.setPower(0.7);
             lr.setPower(-0.7);
             rf.setPower(-0.7);
-            rr.setPower(-0.7);
-            sleep(4500);
-
-            stopDrive();
-
-            intake.setPower(-1);
-            sleep(2500);
-
-            // Drive backward with intake
-            lf.setPower(0.7);
-            lr.setPower(0.7);
-            rf.setPower(0.7);
             rr.setPower(0.7);
-            sleep(4500);
+            sleep(1250);
 
             stopDrive();
 
-            lf.setPower(0.5);
-            lr.setPower(0.5);
-            rf.setPower(-0.5);
-            rr.setPower(-0.5);
-            sleep(140);
-
-            stopDrive();
-
-
-
-            // Final shooter spin
-            shooter1.setVelocity(1160);
-            shooter2.setVelocity(1160);
-            sleep(3000);
-
-            // Run intake
-            intake.setPower(-1);
-            sleep(8000);
-
-            shooter1.setVelocity(0);
-            shooter2.setVelocity(0);
-            intake.setPower(0);
-
-            stopDrive();
-
-            sleep(10000);
+            sleep(25000);
         }
     }
 

@@ -27,6 +27,8 @@ public class th2ball extends LinearOpMode {
         rr = hardwareMap.get(DcMotorEx.class, "rr");
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
+        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         lf.setDirection(DcMotorSimple.Direction.FORWARD);
         lr.setDirection(DcMotorSimple.Direction.FORWARD);
